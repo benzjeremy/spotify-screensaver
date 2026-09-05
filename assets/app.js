@@ -11,7 +11,9 @@
   const trackTitleEl = document.getElementById("trackTitle");
   const trackArtistEl = document.getElementById("trackArtist");
   const trackAlbumEl = document.getElementById("trackAlbum");
+  const progressBarContainer = document.getElementById("progressBarContainer");
   const progressFillEl = document.getElementById("progressFill");
+  const progressHandleEl = document.getElementById("progressHandle");
   const currentTimeEl = document.getElementById("currentTime");
   const totalTimeEl = document.getElementById("totalTime");
 
@@ -20,6 +22,7 @@
   const btnNext = document.getElementById("btnNext");
   const playIcon = document.getElementById("playIcon");
   const pauseIcon = document.getElementById("pauseIcon");
+  const volSlider = document.getElementById("volSlider");
   const volTextEl = document.getElementById("volText");
 
   const sourceLabelEl = document.getElementById("sourceLabel");
@@ -34,10 +37,10 @@
   const btnCloseModal = document.getElementById("btnCloseModal");
   const btnSaveConfig = document.getElementById("btnSaveConfig");
   const cfgVisualizer = document.getElementById("cfgVisualizer");
+  const cfgSensitivity = document.getElementById("cfgSensitivity");
   const cfgClockFormat = document.getElementById("cfgClockFormat");
-  const cfgAutoSkip = document.getElementById("cfgAutoSkip");
-  const cfgAIKey = document.getElementById("cfgAIKey");
-  const cfgAIUrl = document.getElementById("cfgAIUrl");
+  const cfgShowSeconds = document.getElementById("cfgShowSeconds");
+  const themeSwatches = document.querySelectorAll(".btn-theme-swatch");
 
   // State
   let currentState = {
@@ -55,7 +58,10 @@
   let localPositionMs = 0;
   let lastSyncTime = Date.now();
   let clock24H = true;
+  let showSeconds = true;
   let visualizerMode = "bars";
+  let visualizerSensitivity = 80;
+  let currentTheme = "spotify";
 
   // Inactivity auto-hide
   let mouseTimer = null;
@@ -84,7 +90,12 @@
 
     hoursEl.textContent = String(h).padStart(2, "0");
     minutesEl.textContent = m;
-    secondsEl.textContent = s;
+    if (showSeconds) {
+      secondsEl.style.display = "inline";
+      secondsEl.textContent = s;
+    } else {
+      secondsEl.style.display = "none";
+    }
 
     // German Date format
     const options = { weekday: "long", day: "numeric", month: "long", year: "numeric" };
@@ -124,6 +135,7 @@
     trackArtistEl.textContent = data.artist || "Spotify";
     trackAlbumEl.textContent = data.album || "";
     volTextEl.textContent = `${data.volume_percent}%`;
+    volSlider.value = data.volume_percent;
 
     totalTimeEl.textContent = formatMs(data.duration_ms);
 
@@ -144,15 +156,13 @@
     // Source indicator
     if (data.source === "mpris") {
       sourceLabelEl.textContent = `Spotify MPRIS (${data.player_name})`;
-      statusDotEl.style.backgroundColor = "#1db954";
-      statusDotEl.style.boxShadow = "0 0 10px #1db954";
+      statusDotEl.style.opacity = "1";
     } else if (data.source === "spotify_player") {
       sourceLabelEl.textContent = "spotify_player CLI";
-      statusDotEl.style.backgroundColor = "#1db954";
+      statusDotEl.style.opacity = "1";
     } else {
       sourceLabelEl.textContent = "Demo / Standby";
-      statusDotEl.style.backgroundColor = "#64748b";
-      statusDotEl.style.boxShadow = "none";
+      statusDotEl.style.opacity = "0.4";
     }
   }
 
@@ -165,10 +175,12 @@
       currentTimeEl.textContent = formatMs(currentPos);
       const pct = (currentPos / currentState.duration_ms) * 100;
       progressFillEl.style.width = `${pct}%`;
+      progressHandleEl.style.left = `${pct}%`;
     } else {
       currentTimeEl.textContent = formatMs(localPositionMs);
       const pct = currentState.duration_ms > 0 ? (localPositionMs / currentState.duration_ms) * 100 : 0;
       progressFillEl.style.width = `${pct}%`;
+      progressHandleEl.style.left = `${pct}%`;
     }
     requestAnimationFrame(tickTimeline);
   }
@@ -185,7 +197,7 @@
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body)
       });
-      setTimeout(pollStatus, 200);
+      setTimeout(pollStatus, 150);
     } catch (e) {
       console.error(e);
     }
@@ -194,6 +206,29 @@
   btnPlay.addEventListener("click", () => postAction("/api/playpause"));
   btnNext.addEventListener("click", () => postAction("/api/next"));
   btnPrev.addEventListener("click", () => postAction("/api/previous"));
+
+  // Interactive Progress Scrubber Click
+  progressBarContainer.addEventListener("click", (e) => {
+    if (currentState.duration_ms <= 0) return;
+    const rect = progressBarContainer.getBoundingClientRect();
+    const clickX = e.clientX - rect.left;
+    const pct = Math.max(0, Math.min(1, clickX / rect.width));
+    const targetMs = Math.floor(pct * currentState.duration_ms);
+    const targetSec = Math.floor(targetMs / 1000);
+    localPositionMs = targetMs;
+    lastSyncTime = Date.now();
+    postAction("/api/seek", { seconds: targetSec });
+  });
+
+  // Interactive Volume Slider
+  volSlider.addEventListener("input", (e) => {
+    const val = parseInt(e.target.value, 10);
+    volTextEl.textContent = `${val}%`;
+    const delta = val - currentState.volume_percent;
+    if (delta !== 0) {
+      postAction("/api/volume", { delta });
+    }
+  });
 
   // 4. Keyboard Shortcuts
   window.addEventListener("keydown", (e) => {
@@ -266,76 +301,127 @@
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     const width = canvas.width;
     const height = canvas.height;
-    const barWidth = (width / numBars) * 0.65;
-    const spacing = (width / numBars) * 0.35;
+    const sensFactor = visualizerSensitivity / 80.0;
 
     phase += currentState.is_playing ? 0.08 : 0.02;
+    const accentColor = getComputedStyle(document.body).getPropertyValue("--accent-primary").trim() || "#1db954";
 
-    for (let i = 0; i < numBars; i++) {
-      const b = bars[i];
-      if (currentState.is_playing) {
-        // Dynamic simulated FFT frequency bands
-        const freqWave = Math.sin(phase + (i * 0.35)) * 0.5 + 0.5;
-        const beatBounce = Math.sin(phase * 2.2 + (i % 4)) > 0.6 ? 1 : 0.2;
-        const noise = Math.random() * 0.25;
-        b.targetHeight = (freqWave * 0.65 + beatBounce * 0.2 + noise) * (height * 0.85);
-      } else {
-        // Subtle resting sine wave
-        b.targetHeight = (Math.sin(phase + i * 0.2) * 0.2 + 0.25) * (height * 0.25);
-      }
-
-      // Smooth interpolation with peak drop
-      b.height += (b.targetHeight - b.height) * 0.25;
-
-      if (b.height > b.peak) {
-        b.peak = b.height;
-        b.peakHold = 12;
-      } else {
-        if (b.peakHold > 0) {
-          b.peakHold--;
-        } else {
-          b.peak -= 1.5 * window.devicePixelRatio;
-          if (b.peak < b.height) b.peak = b.height;
-        }
-      }
-
-      const x = i * (barWidth + spacing) + spacing / 2;
-      const y = height - b.height;
-
-      // Bar gradient
-      const grad = ctx.createLinearGradient(0, height, 0, y);
-      grad.addColorStop(0, "rgba(29, 185, 84, 0.2)");
-      grad.addColorStop(0.5, "rgba(29, 185, 84, 0.85)");
-      grad.addColorStop(1, "rgba(56, 189, 248, 0.95)");
-
-      ctx.fillStyle = grad;
+    if (visualizerMode === "wave") {
       ctx.beginPath();
-      ctx.roundRect(x, y, barWidth, b.height, [4, 4, 0, 0]);
-      ctx.fill();
+      ctx.moveTo(0, height / 2);
+      for (let x = 0; x < width; x += 4) {
+        const freq = currentState.is_playing ? 0.015 : 0.008;
+        const amp = (currentState.is_playing ? height * 0.35 : height * 0.12) * sensFactor;
+        const y = height / 2 + Math.sin(x * freq + phase) * amp * Math.cos(x * 0.005 + phase * 0.5);
+        ctx.lineTo(x, y);
+      }
+      ctx.strokeStyle = accentColor;
+      ctx.lineWidth = 3 * window.devicePixelRatio;
+      ctx.shadowColor = accentColor;
+      ctx.shadowBlur = 15;
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+    } else if (visualizerMode === "mirrored") {
+      const barWidth = (width / numBars) * 0.65;
+      const spacing = (width / numBars) * 0.35;
+      const centerY = height / 2;
 
-      // Peak cap
-      const peakY = height - b.peak - 3;
-      ctx.fillStyle = "#38bdf8";
-      ctx.fillRect(x, Math.max(peakY, 0), barWidth, 2 * window.devicePixelRatio);
+      for (let i = 0; i < numBars; i++) {
+        const b = bars[i];
+        if (currentState.is_playing) {
+          const freqWave = Math.sin(phase + (i * 0.35)) * 0.5 + 0.5;
+          const beatBounce = Math.sin(phase * 2.2 + (i % 4)) > 0.6 ? 1 : 0.2;
+          b.targetHeight = (freqWave * 0.6 + beatBounce * 0.3) * (centerY * 0.85) * sensFactor;
+        } else {
+          b.targetHeight = (Math.sin(phase + i * 0.2) * 0.2 + 0.2) * (centerY * 0.3);
+        }
+        b.height += (b.targetHeight - b.height) * 0.25;
+
+        const x = i * (barWidth + spacing) + spacing / 2;
+        ctx.fillStyle = accentColor;
+        ctx.fillRect(x, centerY - b.height, barWidth, b.height * 2);
+      }
+    } else {
+      const barWidth = (width / numBars) * 0.65;
+      const spacing = (width / numBars) * 0.35;
+
+      for (let i = 0; i < numBars; i++) {
+        const b = bars[i];
+        if (currentState.is_playing) {
+          const freqWave = Math.sin(phase + (i * 0.35)) * 0.5 + 0.5;
+          const beatBounce = Math.sin(phase * 2.2 + (i % 4)) > 0.6 ? 1 : 0.2;
+          const noise = Math.random() * 0.25;
+          b.targetHeight = (freqWave * 0.65 + beatBounce * 0.2 + noise) * (height * 0.85) * sensFactor;
+        } else {
+          b.targetHeight = (Math.sin(phase + i * 0.2) * 0.2 + 0.25) * (height * 0.25);
+        }
+
+        b.height += (b.targetHeight - b.height) * 0.25;
+
+        if (b.height > b.peak) {
+          b.peak = b.height;
+          b.peakHold = 12;
+        } else {
+          if (b.peakHold > 0) {
+            b.peakHold--;
+          } else {
+            b.peak -= 1.5 * window.devicePixelRatio;
+            if (b.peak < b.height) b.peak = b.height;
+          }
+        }
+
+        const x = i * (barWidth + spacing) + spacing / 2;
+        const y = height - b.height;
+
+        const grad = ctx.createLinearGradient(0, height, 0, y);
+        grad.addColorStop(0, "rgba(255, 255, 255, 0.05)");
+        grad.addColorStop(0.5, accentColor);
+        grad.addColorStop(1, "#fff");
+
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.roundRect(x, y, barWidth, b.height, [4, 4, 0, 0]);
+        ctx.fill();
+
+        const peakY = height - b.peak - 3;
+        ctx.fillStyle = "#fff";
+        ctx.fillRect(x, Math.max(peakY, 0), barWidth, 2 * window.devicePixelRatio);
+      }
     }
 
     requestAnimationFrame(renderVisualizer);
   }
   requestAnimationFrame(renderVisualizer);
 
-  // 6. Settings Modal
+  // 6. Settings Modal & Theme Accents (No AI!)
+  function applyTheme(theme) {
+    currentTheme = theme;
+    document.body.setAttribute("data-theme", theme);
+    themeSwatches.forEach(sw => {
+      if (sw.getAttribute("data-theme") === theme) {
+        sw.classList.add("active");
+      } else {
+        sw.classList.remove("active");
+      }
+    });
+  }
+
+  themeSwatches.forEach(sw => {
+    sw.addEventListener("click", () => {
+      applyTheme(sw.getAttribute("data-theme"));
+    });
+  });
+
   btnSettings.addEventListener("click", async () => {
     try {
       const res = await fetch("/api/config");
       if (res.ok) {
         const cfg = await res.json();
         cfgClockFormat.checked = cfg.clock_format_24h ?? true;
-        cfgAutoSkip.checked = cfg.auto_skip_depri ?? false;
+        cfgShowSeconds.checked = cfg.show_seconds ?? true;
         cfgVisualizer.value = cfg.visualizer_mode || "bars";
-        cfgAIUrl.value = cfg.ai_base_url || "http://localhost:9001";
-        if (cfg.has_ai_key) {
-          cfgAIKey.placeholder = "•••••••••••• (gespeichert)";
-        }
+        cfgSensitivity.value = cfg.sensitivity || 80;
+        if (cfg.theme_accent) applyTheme(cfg.theme_accent);
       }
     } catch (e) {}
     modalSettings.classList.remove("hidden");
@@ -347,17 +433,18 @@
   });
 
   btnSaveConfig.addEventListener("click", async () => {
-    const payload = {
-      clock_format_24h: cfgClockFormat.checked,
-      auto_skip_depri: cfgAutoSkip.checked,
-      visualizer_mode: cfgVisualizer.value,
-      ai_base_url: cfgAIUrl.value
-    };
-    if (cfgAIKey.value.trim() !== "") {
-      payload.ai_api_key = cfgAIKey.value.trim();
-    }
     clock24H = cfgClockFormat.checked;
+    showSeconds = cfgShowSeconds.checked;
     visualizerMode = cfgVisualizer.value;
+    visualizerSensitivity = parseInt(cfgSensitivity.value, 10) || 80;
+
+    const payload = {
+      clock_format_24h: clock24H,
+      show_seconds: showSeconds,
+      visualizer_mode: visualizerMode,
+      theme_accent: currentTheme,
+      sensitivity: visualizerSensitivity
+    };
 
     try {
       await fetch("/api/config", {

@@ -1,11 +1,8 @@
 package spotify
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
 	"os/exec"
 	"runtime"
 	"strconv"
@@ -270,63 +267,15 @@ func abs(n int) int {
 	return n
 }
 
-// CheckAIMood evaluates if track matches chill mood and auto-skips if desired
-func (c *Controller) CheckAIMood(track, artist string) bool {
-	cfg, err := c.store.LoadConfig()
-	if err != nil || !cfg.AutoSkipDepri || cfg.AIAPIKey == "" || track == "" {
-		return false
-	}
+// Seek jumps to a specific second in the track
+func (c *Controller) Seek(seconds int) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
 
-	url := strings.TrimRight(cfg.AIBaseURL, "/") + "/chat/completions"
-	payload := map[string]interface{}{
-		"model": cfg.AIModel,
-		"messages": []map[string]string{
-			{
-				"role":    "system",
-				"content": "Du bist ein intelligenter Musik-Mood-DJ für einen Bildschirmschoner. Bewerte Songs nach Stimmung.",
-			},
-			{
-				"role": "user",
-				"content": fmt.Sprintf("Aktueller Song: '%s' von '%s'. Der Nutzer möchte entspannte 'Gute Nacht / Chill' Stimmungen. Sollte der Song übersprungen werden? Antworte NUR mit 'SKIP' oder 'KEEP'.",
-					track, artist),
-			},
-		},
-	}
+	c.demoPosition = int64(seconds) * 1000
+	c.demoTicker = time.Now()
 
-	data, err := json.Marshal(payload)
-	if err != nil {
-		return false
+	if runtime.GOOS == "linux" {
+		exec.Command("playerctl", "-p", "spotify,spotify_player,%any", "position", strconv.Itoa(seconds)).Run()
 	}
-
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(data))
-	if err != nil {
-		return false
-	}
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", "Bearer "+cfg.AIAPIKey)
-
-	client := &http.Client{Timeout: 5 * time.Second}
-	resp, err := client.Do(req)
-	if err != nil {
-		return false
-	}
-	defer resp.Body.Close()
-
-	body, _ := io.ReadAll(resp.Body)
-	var oaiResp struct {
-		Choices []struct {
-			Message struct {
-				Content string `json:"content"`
-			} `json:"message"`
-		} `json:"choices"`
-	}
-
-	if err := json.Unmarshal(body, &oaiResp); err == nil && len(oaiResp.Choices) > 0 {
-		ans := strings.ToUpper(strings.TrimSpace(oaiResp.Choices[0].Message.Content))
-		if strings.Contains(ans, "SKIP") {
-			c.Next()
-			return true
-		}
-	}
-	return false
 }

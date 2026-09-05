@@ -30,12 +30,11 @@ type Config struct {
 	RefreshToken        string `json:"refresh_token"`
 	AccessToken         string `json:"access_token"`
 	TokenExpiresAt      int64  `json:"token_expires_at"`
-	AIBaseURL           string `json:"ai_base_url"`
-	AIAPIKey            string `json:"ai_api_key"`
-	AIModel             string `json:"ai_model"`
-	AutoSkipDepri       bool   `json:"auto_skip_depri"`
 	ClockFormat24H      bool   `json:"clock_format_24h"`
+	ShowSeconds         bool   `json:"show_seconds"`
 	VisualizerMode      string `json:"visualizer_mode"`
+	ThemeAccent         string `json:"theme_accent"`
+	Sensitivity         int    `json:"sensitivity"`
 }
 
 type SecureStore struct {
@@ -183,10 +182,10 @@ func (s *SecureStore) LoadConfig() (*Config, error) {
 
 	defaultConfig := &Config{
 		ClockFormat24H: true,
+		ShowSeconds:    true,
 		VisualizerMode: "bars",
-		AIBaseURL:      "http://localhost:9001",
-		AIModel:        "auto",
-		AutoSkipDepri:  false,
+		ThemeAccent:    "spotify",
+		Sensitivity:    80,
 	}
 
 	encrypted, err := os.ReadFile(s.storePath)

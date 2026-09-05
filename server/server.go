@@ -59,6 +59,7 @@ func (s *Server) Start() (string, error) {
 	mux.HandleFunc("/api/playpause", s.handlePlayPause)
 	mux.HandleFunc("/api/next", s.handleNext)
 	mux.HandleFunc("/api/previous", s.handlePrevious)
+	mux.HandleFunc("/api/seek", s.handleSeek)
 	mux.HandleFunc("/api/volume", s.handleVolume)
 	mux.HandleFunc("/api/config", s.handleConfig)
 
@@ -161,6 +162,22 @@ func (s *Server) handleVolume(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
+func (s *Server) handleSeek(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	var req struct {
+		Seconds int `json:"seconds"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "Invalid payload", http.StatusBadRequest)
+		return
+	}
+	s.ctrl.Seek(req.Seconds)
+	w.WriteHeader(http.StatusOK)
+}
+
 func (s *Server) handleConfig(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
@@ -169,28 +186,23 @@ func (s *Server) handleConfig(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		// Return public config without plain-text secret
 		publicCfg := map[string]interface{}{
-			"spotify_client_id": cfg.SpotifyClientID,
-			"ai_base_url":       cfg.AIBaseURL,
-			"ai_model":          cfg.AIModel,
-			"auto_skip_depri":   cfg.AutoSkipDepri,
-			"clock_format_24h":  cfg.ClockFormat24H,
-			"visualizer_mode":   cfg.VisualizerMode,
-			"has_ai_key":        cfg.AIAPIKey != "",
+			"clock_format_24h": cfg.ClockFormat24H,
+			"show_seconds":    cfg.ShowSeconds,
+			"visualizer_mode": cfg.VisualizerMode,
+			"theme_accent":    cfg.ThemeAccent,
+			"sensitivity":     cfg.Sensitivity,
 		}
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(publicCfg)
 
 	case http.MethodPost:
 		var incoming struct {
-			SpotifyClientID string `json:"spotify_client_id"`
-			AIBaseURL       string `json:"ai_base_url"`
-			AIAPIKey        string `json:"ai_api_key"`
-			AIModel         string `json:"ai_model"`
-			AutoSkipDepri   bool   `json:"auto_skip_depri"`
-			ClockFormat24H  bool   `json:"clock_format_24h"`
-			VisualizerMode  string `json:"visualizer_mode"`
+			ClockFormat24H bool   `json:"clock_format_24h"`
+			ShowSeconds    bool   `json:"show_seconds"`
+			VisualizerMode string `json:"visualizer_mode"`
+			ThemeAccent    string `json:"theme_accent"`
+			Sensitivity    int    `json:"sensitivity"`
 		}
 		if err := json.NewDecoder(r.Body).Decode(&incoming); err != nil {
 			http.Error(w, "Invalid JSON", http.StatusBadRequest)
@@ -198,22 +210,16 @@ func (s *Server) handleConfig(w http.ResponseWriter, r *http.Request) {
 		}
 
 		cfg, _ := s.store.LoadConfig()
-		if incoming.SpotifyClientID != "" {
-			cfg.SpotifyClientID = incoming.SpotifyClientID
-		}
-		if incoming.AIBaseURL != "" {
-			cfg.AIBaseURL = incoming.AIBaseURL
-		}
-		if incoming.AIAPIKey != "" {
-			cfg.AIAPIKey = incoming.AIAPIKey
-		}
-		if incoming.AIModel != "" {
-			cfg.AIModel = incoming.AIModel
-		}
-		cfg.AutoSkipDepri = incoming.AutoSkipDepri
 		cfg.ClockFormat24H = incoming.ClockFormat24H
+		cfg.ShowSeconds = incoming.ShowSeconds
 		if incoming.VisualizerMode != "" {
 			cfg.VisualizerMode = incoming.VisualizerMode
+		}
+		if incoming.ThemeAccent != "" {
+			cfg.ThemeAccent = incoming.ThemeAccent
+		}
+		if incoming.Sensitivity > 0 {
+			cfg.Sensitivity = incoming.Sensitivity
 		}
 
 		if err := s.store.SaveConfig(cfg); err != nil {

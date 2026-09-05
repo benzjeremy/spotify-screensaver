@@ -1,29 +1,43 @@
 # 🌌 Spotify Screensaver
 
 [![Go Version](https://img.shields.io/badge/Go-1.22+-00ADD8?style=flat&logo=go)](https://go.dev/)
+[![Version](https://img.shields.io/badge/Version-v1.1-blue.svg)](https://github.com/benzjeremy/spotify-screensaver/releases/tag/v1.1)
 [![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0-blue.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-Linux%20%7C%20Windows-lightgrey.svg)]()
 [![Security](https://img.shields.io/badge/Security-AES--256--GCM%20%7C%20PBKDF2-green.svg)]()
 
-> Ein eleganter, nativer Desktop-Bildschirmschoner mit **Live-Uhrzeit**, **Spotify Song-Metadaten**, **HTML5 Canvas Audio-Visualizer** und **integrierter Musiksteuerung** für Linux (WebKitGTK) und Windows (App-Mode).
+> Ein eleganter, ressourcenschonender Desktop-Bildschirmschoner mit **Live-OLED-Uhrzeit**, **Spotify Song-Metadaten**, **Multi-Mode HTML5 Canvas Visualizer** und **Musiksteuerung** für Linux (WebKitGTK) und Windows (App-Mode). **100% Local-First & Zero Bloat (Kein KI-Overhead).**
 
 ---
 
-## ✨ Features
+## ✨ Features in v1.1 (Hotfix & Layout Upgrade)
 
-- 🕒 **OLED Digitaluhr & Datum:** Große Neon-Zeitanzeige (HH:MM:SS) mit Sekundenanzeige und lokalisiertem deutschen Datum.
-- 🎵 **Spotify Live-Integration:**
-  - Zero-Config Linux MPRIS / D-Bus Unterstützung (erkennt Spotify Desktop & `spotify_player` sofort ohne API-Key).
-  - Albumcover, Titel, Artist, Albumname und Live-Fortschrittsanzeige mit rotierender Vinyl-Schallplatten-Animation.
-- 🎛️ **Interaktive Steuerung:** Play/Pause, Next Track, Previous Track, Lautstärkeregelung via Maus und Tastatur-Shortcuts.
-- 🌊 **Dynamic Canvas Spectrum Visualizer:** 48 Frequenzbänder mit physikalischer Spitzenwert-Dämpfung (Peak Caps) und Neon-Glow.
+- 🕒 **OLED Digitaluhr & deutsches Datum:**
+  - Große Neon-Zeitanzeige mit konfigurierbarer Sekundenanzeige (ein-/ausblendbar) und 12h/24h-Umschaltung.
+  - Deutsches Datumsformat (z. B. "Samstag, 5. September 2026").
+- 🎨 **Farbakzente & Themes (4 Stile):**
+  - 🟢 **Spotify Classic:** Echtes Spotify-Grün mit feinem Glow.
+  - 🔷 **Electric Cyan:** Futuristisches Ice-Blue Neon.
+  - 🟣 **Neon Purple:** Cyberpunk Violett / Deep Magenta.
+  - 🟡 **Sunset Amber:** Warmer Gold-/Amber-Ton.
+- 🌊 **Multi-Mode Canvas Audio-Visualizer:**
+  - **Bars:** 48 Frequenzbalken mit physikalischem Peak-Hold-Drop und Farbverlauf.
+  - **Wave:** Fließende Oszillograph-Welle mit weichem Glow.
+  - **Mirrored:** Gespiegelte Doppelsäulen vom Zentrum aus.
+  - Regulierbare Sensitivität / Reaktionsstärke.
+- 🎛️ **Interaktiver Player & Steuerung:**
+  - **Progress Scrubber:** Durch Klick auf die Fortschrittsleiste kann direkt zu jeder Songposition gesprungen werden.
+  - **Volume-Slider:** Stufenlose Lautstärkeregelung direkt per Slider oder Tastatur.
+  - **Vinyl-Schallplatten-Animation:** Sanft rotierende Schallplatte mit metallischem Groove-Glanz bei aktiver Wiedergabe.
+- 🎵 **Zero-Config Spotify MPRIS:**
+  - Erkennt Spotify Desktop und `spotify_player` unter Linux ohne API-Key direkt über D-Bus.
+  - Flüssiger Demo-/Standby-Modus, wenn Spotify pausiert oder geschlossen ist.
 - 🛡️ **Verbindliche Sicherheitsarchitektur (Jeremy Benz Standards):**
-  - **Kryptografie:** Secrets & Tokens werden mit **AES-256-GCM** verschlüsselt, abgeleitet via **PBKDF2** mit mindestens **100.000 Iterationen** und hardware-gebundenem Salt.
-  - **Netzwerk:** Lokaler HTTP-Server bindet ausschließlich an `127.0.0.1:43210`.
+  - **Kryptografie:** AES-256-GCM Token-Verschlüsselung, abgeleitet via PBKDF2 (100.000 Runden, Hardware-Fingerprint, unikat generiertes Salt in `~/.config/spotify-screensaver/salt.bin`).
+  - **Netzwerksicherheit:** Lokaler HTTP-Server bindet strikt an `127.0.0.1:43210`.
   - **Anti-DNS-Rebinding & Anti-CSRF:** Strikte Validierung des `Host`- und `Origin`-Headers.
-  - **Security Headers:** `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: no-referrer`, Content Security Policy (CSP).
-- 💤 **Screensaver-Automatik:** Automatisches Ausblenden des Mauszeigers und HUD nach 4 Sekunden Inaktivität.
-- 🤖 **KI Mood-DJ (Optional):** Integration für FreeLLM / OpenAI zur automatischen Song-Filterung ("Auto-Skip Depri").
+  - **Security Headers:** `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: no-referrer`, CSP.
+- 💤 **Screensaver-Automatik:** Automatisches Ausblenden von Mauszeiger und HUD nach 4 Sekunden Inaktivität.
 
 ---
 
@@ -45,9 +59,6 @@
 ### 1. Aus Quellcode kompilieren (Linux mit WebKitGTK)
 
 ```bash
-# Voraussetzungen auf Arch / CachyOS:
-# webkit2gtk-4.1 gtk3 playerctl
-
 cd ~/Projekte/benzjeremy.github.io/spotify-screensaver
 go build -o spotify-screensaver .
 ./spotify-screensaver
@@ -69,31 +80,6 @@ go build -o spotify-screensaver .
 
 ```bash
 CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o bin/spotify-screensaver-windows-amd64.exe .
-```
-
----
-
-## 🏛️ Architektur
-
-```
-spotify-screensaver/
-├── assets/                  # Embedded UI (HTML5, CSS3, ES6 JS, Canvas)
-│   ├── index.html
-│   ├── style.css
-│   └── app.js
-├── store/                   # AES-256-GCM & PBKDF2 (100k) Token-Speicher
-│   ├── crypto.go
-│   └── crypto_test.go
-├── spotify/                 # MPRIS D-Bus & Spotify Player Integration
-│   ├── controller.go
-│   └── types.go
-├── server/                  # 127.0.0.1 Server, Anti-CSRF, Anti-DNS-Rebinding
-│   ├── server.go
-│   └── server_test.go
-├── gui_linux.go             # WebKitGTK Native Window (Linux)
-├── gui_windows.go           # Chrome/Edge App-Mode Launcher (Windows)
-├── gui_other.go             # Fallback Launcher
-└── main.go                  # Einstiegspunkt & Lifecycle-Management
 ```
 
 ---
