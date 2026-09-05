@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>spotify-screensaver Wiki · Offizielle Dokumentation & Guide</title>
+  <meta name="description" content="Offizielle Dokumentation und Benutzerhandbuch für spotify-screensaver: Installation, MPRIS D-Bus Integration, Bedienung, Tastaturkürzel und Sicherheitsarchitektur.">
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <link rel="stylesheet" href="wiki.css">
+</head>
+<body>
+
+  <div class="wiki-layout">
+    <aside class="sidebar">
+      <a href="https://benzjeremy.github.io/" style="font-size:0.8rem; color:var(--text-muted); text-decoration:none; margin-bottom:0.75rem; display:inline-block; font-weight:600;">← benzjeremy.github.io</a>
+      <a href="../" style="display:flex; align-items:center; gap:0.6rem; font-weight:700; font-size:1.1rem; color:#fff; margin-bottom:1.5rem; text-decoration:none;">
+        <img src="../favicon.svg" width="26" height="26" alt="spotify-screensaver"> spotify-screensaver <span style="font-size:0.72rem; color:var(--accent); font-family:var(--font-mono); margin-left:auto;">v1.2</span>
+      </a>
+
+      <h3>Überblick</h3>
+      <a href="#einfuehrung" class="active">Einführung</a>
+      <a href="#architektur">Architektur & MPRIS</a>
+      <a href="#installation">Installation & Setup</a>
+
+      <h3>Bedienung</h3>
+      <a href="#features">Screensaver-Funktionen</a>
+      <a href="#visualizer">Audio-Visualizer & Themes</a>
+      <a href="#shortcuts">Tastaturkürzel</a>
+
+      <h3>Entwickler</h3>
+      <a href="#api">Lokale REST-API</a>
+      <a href="#security">Sicherheit & Krypto</a>
+      <a href="#troubleshooting">Troubleshooting</a>
+    </aside>
+
+    <main class="content">
+      <h1>📖 Offizielles spotify-screensaver Wiki</h1>
+      <p>
+        Willkommen im offiziellen Wiki für <strong>spotify-screensaver</strong> – der elegante, ressourcenschonende Desktop-Bildschirmschoner mit scharfer Digitaluhr, Live-Spotify-Metadaten, interaktivem HTML5 Canvas Audio-Visualizer und nativer Steuerung für Linux und Windows.
+      </p>
+
+      <div class="callout">
+        <p>
+          <strong>💡 100% Local-First & Zero-AI:</strong> Diese Anwendung läuft komplett autonom auf deinem Rechner. Keine Cloud-Telemetry, keine externen KI-Aufrufe, keine Tracker. Deine Musik, deine Daten, deine Privatsphäre.
+        </p>
+      </div>
+
+      <h2 id="einfuehrung">1. Einführung</h2>
+      <p>
+        Wer am Arbeitsplatz Musik hört, möchte oft eine ästhetische, ablenkungsfreie Anzeige: die Uhrzeit groß im Blick, das Cover und der Songtitel des aktuell spielenden Titels, und die Möglichkeit, Songs ohne Fensterwechsel zu überspringen.
+      </p>
+      <p>
+        <strong>spotify-screensaver</strong> löst dies als native Desktop-Anwendung in reiner Go-Architektur mit extrem geringer CPU- und RAM-Last:
+      </p>
+      <ul>
+        <li><strong>Linux:</strong> Echtes natives WebKitGTK 4.1 Desktop-Fenster mit Hardware-Compositing.</li>
+        <li><strong>Windows:</strong> Randloser App-Mode (Edge / Chrome WebView).</li>
+        <li><strong>Zero-Config:</strong> Erkennt automatisch laufende Spotify-Clients via Linux MPRIS D-Bus.</li>
+        <li><strong>Kein Electron-Ballast:</strong> Startet in Sekundenbruchteilen und schont Laptop-Akkus.</li>
+      </ul>
+
+      <h2 id="architektur">2. Architektur & MPRIS D-Bus</h2>
+      <p>
+        Die Anwendung besteht aus einem leichtgewichtigen Go-Core und einem eingebetteten Canvas-Frontend:
+      </p>
+      <pre>+-------------------------------------------------------------+
+|                      spotify-screensaver                    |
+|                                                             |
+|   +-------------------+              +------------------+   |
+|   |  Native GUI Layer |              |  Go HTTP Server  |   |
+|   |  (WebKitGTK /     |<--- fetch ---|  (127.0.0.1:     |   |
+|   |   Chrome App)     |--- Actions ->|   43210)         |   |
+|   +-------------------+              +--------+---------+   |
+|                                               |             |
+|                                       +-------v---------+   |
+|                                       | Linux MPRIS     |   |
+|                                       | D-Bus Engine    |   |
+|                                       | (org.mpris.     |   |
+|                                       |  MediaPlayer2)  |   |
+|                                       +-----------------+   |
++-------------------------------------------------------------+</pre>
+      <p>
+        Unter Linux kommuniziert der Daemon über den Session-Bus direkt mit <code>org.mpris.MediaPlayer2.spotify</code>. Titel, Interpret, Album, Cover-URL, Songposition und Status werden ohne Polling-Verzögerung synchronisiert.
+      </p>
+
+      <h2 id="installation">3. Installation & Setup</h2>
+      <p>
+        spotify-screensaver wird als statische Single-Binary für Linux (x86_64) und Windows (x86_64) ausgeliefert.
+      </p>
+
+      <h3>Option A: Installation via Go (Empfohlen)</h3>
+      <pre>go install github.com/benzjeremy/spotify-screensaver@latest
+spotify-screensaver</pre>
+
+      <h3>Option B: Vorkompilierte Binaries</h3>
+      <p>
+        Die offiziellen Release-Archive stehen auf GitHub unter <a href="https://github.com/benzjeremy/spotify-screensaver/releases/latest" target="_blank" style="color:var(--accent);"><strong>Releases (Latest)</strong></a> zum Download bereit:
+      </p>
+      <h4>Linux (x86_64):</h4>
+      <pre>tar -xzf spotify-screensaver-v1.2-linux.tar.gz
+sudo cp spotify-screensaver-linux-amd64 /usr/local/bin/spotify-screensaver
+spotify-screensaver</pre>
+
+      <h4>Windows (x86_64):</h4>
+      <p>
+        Archiv <code>spotify-screensaver-v1.2-windows.zip</code> entpacken und <code>spotify-screensaver.exe</code> starten.
+      </p>
+
+      <h2 id="features">4. Screensaver-Funktionen</h2>
+      <ul>
+        <li><strong>OLED Digitaluhr:</strong> Gestochen scharfe Zeitanzeige (12h oder 24h) mit deutscher Datumsausgabe und zuschaltbarer Sekundenanzeige.</li>
+        <li><strong>Cover Art & Metadaten:</strong> Hochauflösende Cover-Anzeige mit Songtitel, Artist und Album.</li>
+        <li><strong>Interaktiver Progress Scrubber:</strong> Durch Anklicken des Fortschrittsbalkens springt der Player direkt an die ausgewählte Stelle im Song.</li>
+        <li><strong>Lautstärkeregler:</strong> Direkte Lautstärkejustierung per Schieberegler oder Pfeiltasten.</li>
+        <li><strong>Inaktivitäts-Autohide:</strong> Mauszeiger und HUD-Footer blenden sich bei Inaktivität nach 4 Sekunden automatisch aus.</li>
+      </ul>
+
+      <h2 id="visualizer">5. Audio-Visualizer & Themes</h2>
+      <p>
+        Der integrierte HTML5 Canvas Visualizer läuft mit nativer 2D-Hardwarebeschleunigung und bietet 3 verschiedene Darstellungsmodi:
+      </p>
+      <ul>
+        <li><code>bars</code>: 48 Frequenzbalken mit schwerkraft-simulierten Peak-Hold Kappen und fließendem Farbverlauf.</li>
+        <li><code>wave</code>: Weich pulsierende, mehrlagige Sinus-Wellenform mit hardwarenahem Neon-Glow.</li>
+        <li><code>mirrored</code>: Von der Mittellinie nach oben und unten gespiegelte Frequenzsäulen.</li>
+      </ul>
+
+      <h3>4 Dynamische Themes</h3>
+      <p>Über das Einstellungs-Icon (Zahnrad oben rechts) kann die Akzentfarbe jederzeit gewechselt werden:</p>
+      <ul>
+        <li>🟢 <strong>Spotify Green</strong> (<code>#1db954</code>) – Klassischer Spotify-Look</li>
+        <li>🔵 <strong>Electric Cyan</strong> (<code>#00f2ff</code>) – Cyberpunk Neon-Blau</li>
+        <li>🟣 <strong>Neon Purple</strong> (<code>#c084fc</code>) – Kräftiges Synthwave-Violett</li>
+        <li>🟠 <strong>Sunset Amber</strong> (<code>#fbbf24</code>) – Warmer Sonnenuntergang</li>
+      </ul>
+
+      <h2 id="shortcuts">6. Tastaturkürzel</h2>
+      <pre>Leertaste (Space)  -> Wiedergabe pausieren / fortsetzen
+Pfeil rechts (->)  -> Nächster Titel (Next Track)
+Pfeil links (<-)   -> Vorheriger Titel (Previous Track)
+Pfeil oben (^)     -> Lautstärke +5%
+Pfeil unten (v)    -> Lautstärke -5%
+Taste F / F11      -> Vollbildmodus umschalten (Fullscreen Toggle)
+Taste Escape (ESC) -> Einstellungsfenster / Screensaver schließen</pre>
+
+      <h2 id="api">7. Lokale REST-API</h2>
+      <p>
+        Der interne HTTP-Server lauscht ausschließlich auf <code>127.0.0.1:43210</code> und stellt folgende Endpunkte bereit:
+      </p>
+      <pre>GET  /api/status      -> Liefert aktuellen Track, Position, Dauer und Cover-URL
+POST /api/playpause   -> Schaltet Play/Pause um
+POST /api/next        -> Springt zum nächsten Song
+POST /api/previous    -> Springt zum vorherigen Song
+POST /api/seek        -> Springt im Song (Body: {"seconds": 120})
+POST /api/volume      -> Ändert Lautstärke (Body: {"delta": 5})
+GET  /api/config      -> Liest gespeicherte Display- und Theme-Optionen
+POST /api/config      -> Speichert Einstellungen (JSON)</pre>
+
+      <h2 id="security">8. Sicherheit & Krypto</h2>
+      <p>
+        Nach Jeremys strikten Architekturstandards bindet sich der interne Webserver niemals an externe Schnittstellen:
+      </p>
+      <ul>
+        <li><strong>Strict Localhost:</strong> Server bindet ausnahmslos an <code>127.0.0.1</code>.</li>
+        <li><strong>Token-Verschlüsselung:</strong> OAuth-Tokens werden mit <strong>AES-256-GCM</strong> verschlüsselt.</li>
+        <li><strong>Key Derivation:</strong> Schlüsselableitung erfolgt über <strong>PBKDF2 mit 100.000 Iterationen</strong> und kryptografischem Salt pro Installation.</li>
+        <li><strong>Anti-CSRF & DNS-Rebinding:</strong> Externe Domains können keine Anfragen an die lokale API stellen.</li>
+      </ul>
+
+      <h2 id="troubleshooting">9. Troubleshooting & Performance</h2>
+      <h3>Problem: Hohe CPU-Auslastung auf Linux-Laptops</h3>
+      <p>
+        In Version v1.2 wurde der bekannte WebKitGTK DMABUF-Compositor-Bug durch Setzen von <code>WEBKIT_DISABLE_DMABUF_RENDERER=1</code> und <code>WEBKIT_FORCE_COMPOSITING_MODE=1</code> vollständig behoben. Gleichzeitig wurden alle schweren CSS-Blur-Filter entfernt.
+      </p>
+      <p>
+        Falls du eine ältere Version nutzt, aktualisiere umgehend auf <strong>v1.2</strong>:
+      </p>
+      <pre>go install github.com/benzjeremy/spotify-screensaver@v1.2</pre>
+
+      <h3>Problem: Spotify MPRIS wird nicht erkannt</h3>
+      <p>
+        Prüfe, ob Spotify auf deinem Linux-System läuft und D-Bus aktiviert ist:
+      </p>
+      <pre>playerctl -l
+# Ausgabe sollte 'spotify' oder 'spotify_player' enthalten</pre>
+
+      <div class="footer">
+        <div>Jeremy Benz (@benzjeremy) · Open Source unter GPL-3.0</div>
+        <div>
+          <a href="https://benzjeremy.github.io/impressum.html">Impressum</a> · 
+          <a href="https://benzjeremy.github.io/datenschutz.html">Datenschutz</a> · 
+          <a href="https://github.com/benzjeremy/spotify-screensaver" target="_blank">GitHub</a>
+        </div>
+      </div>
+    </main>
+  </div>
+
+</body>
+</html>

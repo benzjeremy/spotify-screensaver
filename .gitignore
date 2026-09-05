@@ -1,0 +1,6 @@
+/bin/
+/spotify-screensaver
+*.exe
+*.tar.gz
+*.zip
+.DS_Store
