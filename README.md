@@ -1,12 +1,15 @@
 # 🌌 Spotify Screensaver
 
-[![Go Version](https://img.shields.io/badge/Go-1.22+-00ADD8?style=flat&logo=go)](https://go.dev/)
-[![Version](https://img.shields.io/badge/Version-v1.1-blue.svg)](https://github.com/benzjeremy/spotify-screensaver/releases/tag/v1.1)
+[![Go Reference](https://pkg.go.dev/badge/github.com/benzjeremy/spotify-screensaver.svg)](https://pkg.go.dev/github.com/benzjeremy/spotify-screensaver)
+[![Go Report Card](https://goreportcard.com/badge/github.com/benzjeremy/spotify-screensaver.svg)](https://goreportcard.com/report/github.com/benzjeremy/spotify-screensaver)
+[![CI](https://github.com/benzjeremy/spotify-screensaver/actions/workflows/ci.yml/badge.svg)](https://github.com/benzjeremy/spotify-screensaver/actions)
+[![Coverage](https://codecov.io/gh/benzjeremy/spotify-screensaver/branch/main/graph/badge.svg)](https://app.codecov.io/gh/benzjeremy/spotify-screensaver)
+[![Awesome Go](https://awesome.re/mentioned-badge.svg)](https://github.com/avelino/awesome-go)
+[![Release](https://img.shields.io/badge/Release-Latest-emerald)](https://github.com/benzjeremy/spotify-screensaver/releases/latest)
 [![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0-blue.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-Linux%20%7C%20Windows-lightgrey.svg)]()
-[![Security](https://img.shields.io/badge/Security-AES--256--GCM%20%7C%20PBKDF2-green.svg)]()
 
-> Ein eleganter, ressourcenschonender Desktop-Bildschirmschoner mit **Live-OLED-Uhrzeit**, **Spotify Song-Metadaten**, **Multi-Mode HTML5 Canvas Visualizer** und **Musiksteuerung** für Linux (WebKitGTK) und Windows (App-Mode). **100% Local-First & Zero Bloat (Kein KI-Overhead).**
+> Ein eleganter, ressourcenschonender Desktop-Bildschirmschoner mit **Live-OLED-Uhrzeit**, **Spotify Song-Metadaten**, **hardwarebeschleunigtem Multi-Mode HTML5 Canvas Visualizer** und **Musiksteuerung** für Linux (WebKitGTK) und Windows (App-Mode). **100% Local-First & Zero Bloat (Kein KI-Overhead).**
 
 ---
 
