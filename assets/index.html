@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spotify Screensaver</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Ambient background glow matching album art or neon green -->
+  <div class="ambient-glow" id="ambientGlow"></div>
+  <div class="vignette"></div>
+
+  <!-- Main Screensaver Canvas & Layout -->
+  <main class="screensaver-container">
+    <!-- Top: Clock & Date -->
+    <header class="clock-section">
+      <div class="time-display" id="timeDisplay">
+        <span id="hours">00</span><span class="colon">:</span><span id="minutes">00</span><span class="seconds-sub" id="seconds">00</span>
+      </div>
+      <div class="date-display" id="dateDisplay">Lade Datum...</div>
+    </header>
+
+    <!-- Center: Spotify Player Glassmorphism Card -->
+    <section class="player-card" id="playerCard">
+      <div class="cover-wrapper">
+        <div class="vinyl-disc" id="vinylDisc">
+          <div class="vinyl-grooves"></div>
+          <div class="vinyl-center"></div>
+        </div>
+        <img id="coverImg" class="album-cover" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300' viewBox='0 0 24 24' fill='%231db954'><path d='M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C13.38 8.4 7.26 8.16 3.72 9.24c-.6.18-1.2-.18-1.38-.72-.18-.6.18-1.2.72-1.38 4.08-1.2 10.8-1.02 14.88 1.44.54.3.72 1.02.42 1.56-.3.48-1.02.72-1.26.54z'/></svg>" alt="Album Cover">
+      </div>
+
+      <div class="track-details">
+        <div class="title-container">
+          <h1 class="track-title" id="trackTitle">Bereit für Musik</h1>
+        </div>
+        <h2 class="track-artist" id="trackArtist">Spotify</h2>
+        <h3 class="track-album" id="trackAlbum">Starte die Wiedergabe</h3>
+
+        <!-- Progress Bar -->
+        <div class="progress-section">
+          <div class="progress-bar-container" id="progressBarContainer">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+          <div class="time-stamps">
+            <span id="currentTime">0:00</span>
+            <span id="totalTime">0:00</span>
+          </div>
+        </div>
+
+        <!-- Interactive Controls -->
+        <div class="controls-bar">
+          <button class="btn-ctrl" id="btnPrev" title="Vorheriger Track (Pfeil Links)">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
+          </button>
+          <button class="btn-ctrl btn-play" id="btnPlay" title="Wiedergabe/Pause (Leertaste)">
+            <svg id="playIcon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            <svg id="pauseIcon" class="hidden" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+          </button>
+          <button class="btn-ctrl" id="btnNext" title="Nächster Track (Pfeil Rechts)">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+          </button>
+          <div class="volume-container">
+            <svg class="vol-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+            <span id="volText">75%</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bottom: Dynamic Audio Spectrum Canvas Visualizer -->
+    <div class="visualizer-container">
+      <canvas id="visualizerCanvas"></canvas>
+    </div>
+
+    <!-- Footer: Status & Hotkey Hints -->
+    <footer class="hud-footer" id="hudFooter">
+      <div class="source-indicator">
+        <span class="status-dot" id="statusDot"></span>
+        <span id="sourceLabel">Verbinde...</span>
+      </div>
+      <div class="hotkey-hints">
+        <span><kbd>Space</kbd> Play/Pause</span>
+        <span><kbd>◀</kbd><kbd>▶</kbd> Track</span>
+        <span><kbd>▲</kbd><kbd>▼</kbd> Lautstärke</span>
+        <span><kbd>F</kbd> Vollbild</span>
+        <span><kbd>ESC</kbd> Beenden</span>
+      </div>
+      <button class="btn-settings" id="btnSettings" title="Einstellungen">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+      </button>
+    </footer>
+  </main>
+
+  <!-- Settings Modal -->
+  <div class="modal-overlay hidden" id="modalSettings">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>⚙️ Screensaver Einstellungen</h2>
+        <button class="btn-close" id="btnCloseModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="cfgVisualizer">Visualizer-Stil:</label>
+          <select id="cfgVisualizer">
+            <option value="bars">Frequenzbalken (Bars)</option>
+            <option value="wave">Oszillographische Welle (Wave)</option>
+            <option value="minimal">Minimalistischer Glow</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>
+            <input type="checkbox" id="cfgClockFormat" checked> 24-Stunden-Uhrzeit verwenden
+          </label>
+        </div>
+        <div class="form-group">
+          <label>
+            <input type="checkbox" id="cfgAutoSkip"> KI-Mood DJ aktiv (Skip bei unpassenden Songs)
+          </label>
+        </div>
+        <div class="form-group">
+          <label for="cfgAIKey">FreeLLM / OpenAI API-Key:</label>
+          <input type="password" id="cfgAIKey" placeholder="freellmapi-...">
+        </div>
+        <div class="form-group">
+          <label for="cfgAIUrl">KI API Base URL:</label>
+          <input type="text" id="cfgAIUrl" value="http://localhost:9001">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-primary" id="btnSaveConfig">Speichern</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+# Binaries
+bin/
+spotify-screensaver
+spotify-screensaver.exe
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Config and local tokens
+.config/
+config.json
+salt.bin
+*.key
+
+# System / IDE
+.DS_Store
+.vscode/
+.idea/
+*.swp
