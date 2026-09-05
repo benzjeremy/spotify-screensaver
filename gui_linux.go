@@ -67,6 +67,8 @@ static void run_gtk_screensaver(const char *title, const char *url, int width, i
     webkit_settings_set_enable_developer_extras(settings, FALSE);
     webkit_settings_set_enable_javascript(settings, TRUE);
     webkit_settings_set_enable_webaudio(settings, TRUE);
+    webkit_settings_set_enable_webgl(settings, TRUE);
+    webkit_settings_set_enable_2d_canvas_acceleration(settings, TRUE);
     webkit_settings_set_hardware_acceleration_policy(settings, WEBKIT_HARDWARE_ACCELERATION_POLICY_ALWAYS);
 
     GtkWidget *web_view = webkit_web_view_new_with_settings(settings);
@@ -89,9 +91,16 @@ static void run_gtk_screensaver(const char *title, const char *url, int width, i
 import "C"
 import (
 	"log"
+	"os"
 	"os/exec"
 	"unsafe"
 )
+
+func init() {
+	// Fix severe WebKitGTK compositor lag / CPU freeze on Linux laptops with Intel/AMD/Nvidia
+	_ = os.Setenv("WEBKIT_DISABLE_DMABUF_RENDERER", "1")
+	_ = os.Setenv("WEBKIT_FORCE_COMPOSITING_MODE", "1")
+}
 
 func LaunchGUI(title, url string, width, height int, fullscreen bool) {
 	if C.check_display() == 0 {

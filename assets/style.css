@@ -1,7 +1,7 @@
 /* Theme Variables */
 :root {
   --bg-deep: #06080d;
-  --panel-bg: rgba(16, 21, 32, 0.75);
+  --panel-bg: rgba(14, 19, 30, 0.95);
   --panel-border: rgba(255, 255, 255, 0.09);
   --accent-primary: #1db954;
   --accent-glow: rgba(29, 185, 84, 0.4);
@@ -52,21 +52,21 @@ body.hide-cursor {
   cursor: none;
 }
 
-/* Ambient glow background */
+/* Ambient glow background (optimized zero-CPU radial gradient without Gaussian blur filter) */
 .ambient-glow {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
-  width: 95vw;
-  height: 95vh;
+  transform: translate3d(-50%, -50%, 0);
+  width: 90vw;
+  height: 90vh;
   border-radius: 50%;
-  background: radial-gradient(circle, var(--accent-glow) 0%, rgba(56, 189, 248, 0.12) 45%, transparent 75%);
-  filter: blur(90px);
+  background: radial-gradient(circle, var(--accent-glow) 0%, rgba(56, 189, 248, 0.08) 40%, transparent 70%);
   opacity: 0.65;
   transition: background 1.2s ease, opacity 1s ease;
   z-index: 0;
   pointer-events: none;
+  will-change: opacity;
 }
 
 .vignette {
@@ -145,11 +145,9 @@ body.hide-cursor {
   gap: 2.8rem;
   background: var(--panel-bg);
   border: 1px solid var(--panel-border);
-  backdrop-filter: blur(28px);
-  -webkit-backdrop-filter: blur(28px);
   padding: 2.2rem 3rem;
   border-radius: 30px;
-  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.12);
   max-width: 880px;
   width: 90%;
   transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
@@ -489,8 +487,7 @@ body.hide-cursor {
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(12px);
+  background: rgba(4, 6, 12, 0.88);
   display: flex;
   align-items: center;
   justify-content: center;
