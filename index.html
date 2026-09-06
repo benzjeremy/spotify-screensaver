@@ -25,12 +25,14 @@
           <img src="favicon.svg" alt="spotify-screensaver" class="brand-logo" width="36" height="36">
           <div class="brand-info">
             <span class="brand-name">spotify-screensaver</span>
-            <span class="brand-ver">v1.2</span>
+            <span class="brand-ver">v1.2.1</span>
           </div>
         </a>
       </div>
 
-      <nav class="main-nav">
+      <button class="mobile-toggle" id="mobile-toggle" aria-label="Menü umschalten" aria-expanded="false">☰</button>
+
+      <nav class="main-nav" id="main-nav">
         <a href="#features">Features</a>
         <a href="#download">Downloads</a>
         <a href="#install">Installation</a>
@@ -49,10 +51,10 @@
     <div class="hero-glow"></div>
     <div class="hero-container">
       <div class="hero-badges">
-        <span class="hero-badge release-badge">🚀 Release v1.2 (Performance Hotfix)</span>
-        <a href="https://github.com/avelino/awesome-go" target="_blank" rel="noopener" class="hero-badge awesome-badge" title="Eingereicht bei Awesome Go">
+        <span class="hero-badge release-badge">🚀 Release v1.2.1 (Security Patch & API Token Auth)</span>
+        <a href="https://github.com/avelino/awesome-go#other-software" target="_blank" rel="noopener" class="hero-badge awesome-badge" title="Aufgenommen in Awesome Go (#6675)">
           <svg viewBox="0 0 24 24" fill="currentColor" class="badge-star"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-          Awesome Go <strong>Candidate</strong>
+          Aufgenommen in <strong>Awesome Go</strong> (#6675)
         </a>
         <a href="https://github.com/benzjeremy/spotify-screensaver?tab=GPL-3.0-1-ov-file" target="_blank" rel="noopener" class="hero-badge license-pill" title="Lizenz: GNU General Public License v3.0 (GPL-3.0)">GPL-3.0</a>
       </div>
@@ -298,6 +300,35 @@ spotify-screensaver</code></pre>
         const btnText = document.getElementById('copyBtnText');
         btnText.textContent = 'Kopiert!';
         setTimeout(() => { btnText.textContent = 'Kopieren'; }, 2000);
+      });
+    }
+
+    // Mobile Navigation Toggle
+    const mobileToggle = document.getElementById('mobile-toggle');
+    const mainNav = document.getElementById('main-nav');
+    if (mobileToggle && mainNav) {
+      mobileToggle.addEventListener('click', () => {
+        const isOpen = mainNav.classList.toggle('open');
+        mobileToggle.setAttribute('aria-expanded', isOpen);
+        mobileToggle.innerHTML = isOpen ? '✕' : '☰';
+      });
+
+      mainNav.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+          if (mainNav.classList.contains('open')) {
+            mainNav.classList.remove('open');
+            mobileToggle.setAttribute('aria-expanded', 'false');
+            mobileToggle.innerHTML = '☰';
+          }
+        });
+      });
+
+      document.addEventListener('click', (e) => {
+        if (mainNav.classList.contains('open') && !mainNav.contains(e.target) && !mobileToggle.contains(e.target)) {
+          mainNav.classList.remove('open');
+          mobileToggle.setAttribute('aria-expanded', 'false');
+          mobileToggle.innerHTML = '☰';
+        }
       });
     }
   </script>
