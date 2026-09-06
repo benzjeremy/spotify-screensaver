@@ -42,6 +42,21 @@
   const cfgShowSeconds = document.getElementById("cfgShowSeconds");
   const themeSwatches = document.querySelectorAll(".btn-theme-swatch");
 
+  // 0. Session Token Authentication
+  const urlParams = new URLSearchParams(window.location.search);
+  let sessionToken = urlParams.get("token") || sessionStorage.getItem("spotify_screensaver_token") || "";
+  if (sessionToken) {
+    sessionStorage.setItem("spotify_screensaver_token", sessionToken);
+  }
+
+  function getAuthHeaders(existing = {}) {
+    const headers = { ...existing };
+    if (sessionToken) {
+      headers["X-Session-Token"] = sessionToken;
+    }
+    return headers;
+  }
+
   // State
   let currentState = {
     is_playing: false,
@@ -115,7 +130,7 @@
 
   async function pollStatus() {
     try {
-      const res = await fetch("/api/status");
+      const res = await fetch("/api/status", { headers: getAuthHeaders() });
       if (res.ok) {
         const data = await res.json();
         applyPlaybackState(data);
@@ -197,7 +212,7 @@
     try {
       await fetch(endpoint, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: getAuthHeaders({ "Content-Type": "application/json" }),
         body: JSON.stringify(body)
       });
       setTimeout(pollStatus, 150);
@@ -440,7 +455,7 @@
 
   btnSettings.addEventListener("click", async () => {
     try {
-      const res = await fetch("/api/config");
+      const res = await fetch("/api/config", { headers: getAuthHeaders() });
       if (res.ok) {
         const cfg = await res.json();
         cfgClockFormat.checked = cfg.clock_format_24h ?? true;
@@ -475,7 +490,7 @@
     try {
       await fetch("/api/config", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: getAuthHeaders({ "Content-Type": "application/json" }),
         body: JSON.stringify(payload)
       });
       modalSettings.classList.add("hidden");

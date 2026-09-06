@@ -1,6 +1,8 @@
 package server
 
 import (
+	"crypto/rand"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"io/fs"
@@ -8,28 +10,44 @@ import (
 	"net/http"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/benzjeremy/spotify-screensaver/spotify"
 	"github.com/benzjeremy/spotify-screensaver/store"
 )
 
 type Server struct {
-	port       int
-	ctrl       *spotify.Controller
-	store      *store.SecureStore
-	assets     fs.FS
-	listener   net.Listener
-	httpServer *http.Server
-	mu         sync.Mutex
+	port         int
+	ctrl         *spotify.Controller
+	store        *store.SecureStore
+	assets       fs.FS
+	listener     net.Listener
+	httpServer   *http.Server
+	sessionToken string
+	mu           sync.Mutex
+}
+
+func generateSessionToken() string {
+	b := make([]byte, 16)
+	if _, err := rand.Read(b); err != nil {
+		return fmt.Sprintf("%x", time.Now().UnixNano())
+	}
+	return hex.EncodeToString(b)
 }
 
 func NewServer(port int, ctrl *spotify.Controller, store *store.SecureStore, assets fs.FS) *Server {
 	return &Server{
-		port:   port,
-		ctrl:   ctrl,
-		store:  store,
-		assets: assets,
+		port:         port,
+		ctrl:         ctrl,
+		store:        store,
+		assets:       assets,
+		sessionToken: generateSessionToken(),
 	}
+}
+
+// GetSessionToken returns the active cryptographically secure session token.
+func (s *Server) GetSessionToken() string {
+	return s.sessionToken
 }
 
 func (s *Server) Start() (string, error) {
@@ -72,7 +90,7 @@ func (s *Server) Start() (string, error) {
 
 	go s.httpServer.Serve(listener)
 
-	url := fmt.Sprintf("http://127.0.0.1:%d", s.port)
+	url := fmt.Sprintf("http://127.0.0.1:%d/?token=%s", s.port, s.sessionToken)
 	return url, nil
 }
 
@@ -99,11 +117,29 @@ func (s *Server) securityMiddleware(next http.Handler) http.Handler {
 			}
 		}
 
-		// 3. Security Headers
+		// 3. Mandatory Security Headers
 		w.Header().Set("X-Frame-Options", "DENY")
 		w.Header().Set("X-Content-Type-Options", "nosniff")
 		w.Header().Set("Referrer-Policy", "no-referrer")
 		w.Header().Set("Content-Security-Policy", "default-src 'self' 'unsafe-inline' https: data:; img-src 'self' data: https: http:; media-src 'self' https:;")
+
+		// 4. Strict Token Authentication for API endpoints
+		if strings.HasPrefix(r.URL.Path, "/api/") {
+			token := r.Header.Get("X-Session-Token")
+			if token == "" {
+				token = r.URL.Query().Get("token")
+			}
+			if token == "" {
+				authHeader := r.Header.Get("Authorization")
+				if strings.HasPrefix(authHeader, "Bearer ") {
+					token = strings.TrimPrefix(authHeader, "Bearer ")
+				}
+			}
+			if token == "" || token != s.sessionToken {
+				http.Error(w, "Unauthorized: Invalid or missing session token", http.StatusUnauthorized)
+				return
+			}
+		}
 
 		next.ServeHTTP(w, r)
 	})
