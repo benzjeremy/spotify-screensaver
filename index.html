@@ -3,25 +3,31 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>spotify-screensaver – Eleganter nativer Desktop Bildschirmschoner</title>
-  <meta name="description" content="Offizielle Website für spotify-screensaver: Der elegante, native Desktop-Bildschirmschoner für Spotify mit OLED-Digitaluhr, hardwarebeschleunigtem Audio-Visualizer, MPRIS D-Bus Steuerung & 100% Local-First.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self';" />
+  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <title>spotify-screensaver · Eleganter Desktop Bildschirmschoner in Go · v1.2.1</title>
+  <meta name="description" content="Offizielle Website für spotify-screensaver: Der elegante Desktop-Bildschirmschoner für Spotify in Go & WebKitGTK. OLED-Digitaluhr, 60 FPS Canvas Visualizer, MPRIS D-Bus Steuerung und Awesome-Go gelistet.">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="spotify-screensaver – Eleganter nativer Desktop Bildschirmschoner">
-  <meta property="og:description" content="Nativer Bildschirmschoner für Spotify mit Digitaluhr, Multi-Mode Visualizer und MPRIS D-Bus Integration. 100% Local-First in Go.">
+  <meta property="og:title" content="spotify-screensaver · Desktop Bildschirmschoner in Go">
+  <meta property="og:description" content="Nativer Spotify Bildschirmschoner in Go & WebKitGTK. OLED-Digitaluhr, 60 FPS Audio-Visualizer und MPRIS D-Bus Steuerung.">
   <meta property="og:url" content="https://benzjeremy.github.io/spotify-screensaver/">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="spotify-screensaver · Go Desktop Screensaver">
+  <meta name="twitter:description" content="60 FPS Canvas Visualizer, OLED Burn-In Schutz und D-Bus Steuerung in Go.">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <!-- Header / Navigation -->
+  <!-- Site Navigation -->
   <header class="site-header">
     <div class="nav-container">
-      <div style="display:flex; align-items:center; gap:1.25rem;">
-        <a href="https://benzjeremy.github.io/" style="color:var(--text-secondary); text-decoration:none; font-size:0.85rem; font-weight:600; display:inline-flex; align-items:center; gap:0.35rem;">
-          ← benzjeremy.github.io
+      <div class="nav-left">
+        <a href="https://benzjeremy.github.io/" class="back-root-btn">
+          <span>← benzjeremy.github.io</span>
         </a>
-        <a href="#" class="brand-link">
+        <a href="index.html" class="brand-link">
           <img src="favicon.svg" alt="spotify-screensaver" class="brand-logo" width="36" height="36">
           <div class="brand-info">
             <span class="brand-name">spotify-screensaver</span>
@@ -30,307 +36,414 @@
         </a>
       </div>
 
-      <button class="mobile-toggle" id="mobile-toggle" aria-label="Menü umschalten" aria-expanded="false">☰</button>
+      <button class="mobile-toggle" id="mobile-toggle" aria-label="Menü öffnen/schließen" aria-expanded="false">☰</button>
 
       <nav class="main-nav" id="main-nav">
-        <a href="#features">Features</a>
-        <a href="#download">Downloads</a>
-        <a href="#install">Installation</a>
-        <a href="wiki/">Wiki & Anleitung</a>
-        <a href="#about">Über das Projekt</a>
-        <a href="https://github.com/benzjeremy/spotify-screensaver" target="_blank" rel="noopener" class="github-nav-btn">
-          <svg viewBox="0 0 24 24" fill="currentColor" class="nav-btn-icon"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+        <a href="#features">
+          <span class="lang-de">Features</span>
+          <span class="lang-en" style="display:none;">Features</span>
+        </a>
+        <a href="#architektur">
+          <span class="lang-de">Architektur</span>
+          <span class="lang-en" style="display:none;">Architecture</span>
+        </a>
+        <a href="#install">
+          <span class="lang-de">Installation</span>
+          <span class="lang-en" style="display:none;">Install</span>
+        </a>
+        <a href="#download">
+          <span class="lang-de">Downloads</span>
+          <span class="lang-en" style="display:none;">Downloads</span>
+        </a>
+        <a href="wiki/">
+          <span class="lang-de">Wiki &amp; Anleitung</span>
+          <span class="lang-en" style="display:none;">Wiki &amp; Docs</span>
+        </a>
+
+        <div class="lang-switch" role="group" aria-label="Sprachauswahl">
+          <button type="button" class="lang-btn active" id="btn-lang-de" onclick="setLang('de')">DE</button>
+          <button type="button" class="lang-btn" id="btn-lang-en" onclick="setLang('en')">EN</button>
+        </div>
+
+        <a href="https://github.com/benzjeremy/spotify-screensaver" target="_blank" rel="noopener noreferrer" class="btn-card highlight">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
           <span>GitHub</span>
         </a>
       </nav>
     </div>
   </header>
 
-  <!-- Hero Section -->
-  <section class="hero-section">
-    <div class="hero-glow"></div>
-    <div class="hero-container">
-      <div class="hero-badges">
-        <span class="hero-badge release-badge">🚀 Release v1.2.1 (Security Patch & API Token Auth)</span>
-        <a href="https://github.com/avelino/awesome-go#other-software" target="_blank" rel="noopener" class="hero-badge awesome-badge" title="Aufgenommen in Awesome Go (#6675)">
-          <svg viewBox="0 0 24 24" fill="currentColor" class="badge-star"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-          Aufgenommen in <strong>Awesome Go</strong> (#6675)
-        </a>
-        <a href="https://github.com/benzjeremy/spotify-screensaver?tab=GPL-3.0-1-ov-file" target="_blank" rel="noopener" class="hero-badge license-pill" title="Lizenz: GNU General Public License v3.0 (GPL-3.0)">GPL-3.0</a>
-      </div>
-
-      <h1 class="hero-title">
-        Spotify auf deinem Desktop.<br>
-        <span class="gradient-text">100% Local-First. Schnell. Ästhetisch.</span>
-      </h1>
-
-      <p class="hero-subtitle">
-        <strong>spotify-screensaver</strong> ist der freie, quelloffene Desktop-Bildschirmschoner für Spotify auf Linux und Windows. 
-        Mit gestochen scharfer OLED-Digitaluhr, hardwarebeschleunigtem Multi-Mode Canvas Audio-Visualizer, interaktivem Scrubber, nativer MPRIS D-Bus Steuerung und gehärteter AES-256-GCM Verschlüsselung – ganz ohne Electron oder KI-Ballast.
-      </p>
-
-      <div class="hero-cta-group" id="download">
-        <a href="https://github.com/benzjeremy/spotify-screensaver/releases/tag/v1.2" class="btn-primary">
-          <svg viewBox="0 0 24 24" fill="currentColor" class="btn-icon"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/></svg>
-          <div>
-            <span class="btn-main-text">Download für Linux</span>
-            <span class="btn-sub-text">Release v1.2 (x86_64 .tar.gz)</span>
-          </div>
-        </a>
-        <a href="https://github.com/benzjeremy/spotify-screensaver/releases/tag/v1.2" class="btn-secondary">
-          <svg viewBox="0 0 24 24" fill="currentColor" class="btn-icon"><path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801"/></svg>
-          <div>
-            <span class="btn-main-text">Download für Windows</span>
-            <span class="btn-sub-text">Release v1.2 (x86_64 .zip)</span>
-          </div>
-        </a>
-        <a href="wiki/" class="btn-secondary">
-          <svg viewBox="0 0 24 24" fill="currentColor" class="btn-icon"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
-          <div>
-            <span class="btn-main-text">Wiki & Anleitung</span>
-            <span class="btn-sub-text">Setup & Shortcuts</span>
-          </div>
-        </a>
-      </div>
-
-      <!-- Quick Command Box -->
-      <div class="quick-install-box">
-        <span class="quick-inst-label">Installation per Go:</span>
-        <code class="cmd-code" id="goInstallCmd">go install github.com/benzjeremy/spotify-screensaver@latest</code>
-        <button class="copy-cmd-btn" onclick="copyInstallCmd()" title="Befehl in die Zwischenablage kopieren">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="copy-ic"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-          <span id="copyBtnText">Kopieren</span>
-        </button>
-      </div>
-    </div>
-  </section>
-
-  <!-- Feature Grid Section -->
-  <section class="features-section" id="features">
-    <div class="section-container">
-      <div class="section-header">
-        <h2 class="section-title">Entwickelt für Performance & Ästhetik</h2>
-        <p class="section-sub">Ein eleganter Screensaver, der Musikgenuss und Zeitanzeige kombiniert – kompromisslos ressourcenschonend.</p>
-      </div>
-
-      <div class="feature-grid">
-        <!-- Feature 1 -->
-        <div class="feature-card">
-          <div class="f-card-icon green">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
-          </div>
-          <h3>100% Local-First & Zero-AI</h3>
-          <p>Vollständig autonom ohne externe Cloud-Telemetry oder KI-Ballast. Lokale D-Bus-Kommunikation schützt deine Privatsphäre und spart Akkulaufzeit.</p>
+  <main>
+    <!-- HERO SECTION -->
+    <section class="hero-section" id="hero">
+      <div class="hero-glow"></div>
+      <div class="hero-container">
+        
+        <div class="hero-badges">
+          <span class="hero-badge release-badge">🚀 Release v1.2.1 [OLED &amp; MPRIS]</span>
+          <a href="https://github.com/avelino/awesome-go#other-software" target="_blank" rel="noopener noreferrer" class="hero-badge awesome-badge" title="Gelistet in Awesome-Go (#6667 / #6675)">
+            ★ In Awesome-Go gelistet (#6675)
+          </a>
+          <span class="hero-badge perf-badge">⚡ 60 FPS Canvas · Kein Electron</span>
+          <a href="https://github.com/benzjeremy/spotify-screensaver/blob/main/LICENSE" target="_blank" rel="noopener noreferrer" class="hero-badge license-pill">GNU GPL-3.0</a>
         </div>
 
-        <!-- Feature 2 -->
-        <div class="feature-card">
-          <div class="f-card-icon blue">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2.05v3.03c3.39.49 6 3.39 6 6.92 0 .9-.18 1.75-.48 2.54l2.6 1.53c.56-1.24.88-2.62.88-4.07 0-5.18-3.95-9.45-9-9.95zM12 19c-3.87 0-7-3.13-7-7 0-3.53 2.61-6.43 6-6.92V2.05c-5.05.5-9 4.76-9 9.95 0 5.52 4.47 10 9.99 10 3.31 0 6.24-1.61 8.01-4.09l-2.45-1.45C16.14 17.9 14.21 19 12 19z"/></svg>
-          </div>
-          <h3>Hardware Canvas Visualizer</h3>
-          <p>Flüssiges 60 FPS Spektrum mit 3 umschaltbaren Modi (Bars mit Peak Caps, weiche Sinus-Wave, Mirrored) und nativer 2D-Hardwarebeschleunigung.</p>
-        </div>
-
-        <!-- Feature 3 -->
-        <div class="feature-card">
-          <div class="f-card-icon purple">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L4.35 19.4c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0l1.9-1.9C9.22 19.58 10.57 20 12 20c4.97 0 9-4.03 9-9s-4.03-9-9-9zm0 15c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6z"/></svg>
-          </div>
-          <h3>4 Dynamische Themes</h3>
-          <p>Passe das Farbambiente per Klick an: Wähle zwischen klassischem Spotify Green, Electric Cyan, Neon Purple und warmem Sunset Amber.</p>
-        </div>
-
-        <!-- Feature 4 -->
-        <div class="feature-card">
-          <div class="f-card-icon teal">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
-          </div>
-          <h3>Zero-Config Linux MPRIS</h3>
-          <p>Erkennt laufende Spotify- oder spotify_player-Instanzen automatisch über den Linux D-Bus Session-Bus. Sofort startklar ohne Konfigurationsaufwand.</p>
-        </div>
-
-        <!-- Feature 5 -->
-        <div class="feature-card">
-          <div class="f-card-icon amber">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z"/></svg>
-          </div>
-          <h3>Progress Scrubber & Volume Slider</h3>
-          <p>Klicke direkt auf den Fortschrittsbalken, um sekundengenau im Track zu springen, oder passe die Lautstärke mit dem integrierten Slider an.</p>
-        </div>
-
-        <!-- Feature 6 -->
-        <div class="feature-card">
-          <div class="f-card-icon orange">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
-          </div>
-          <h3>AES-256-GCM & PBKDF2 (100k)</h3>
-          <p>Sensible OAuth-Tokens werden mit AES-256-GCM und installationsspezifischem Salt mit 100.000 PBKDF2-Iterationen sicher verschlüsselt hinterlegt.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Installation Guide Section -->
-  <section class="install-section" id="install">
-    <div class="section-container">
-      <div class="section-header">
-        <h2 class="section-title">Schnelle Installation</h2>
-        <p class="section-sub">Installiere die Standalone-Binärdatei oder nutze die offizielle Go Toolchain.</p>
-      </div>
-
-      <div class="install-grid">
-        <!-- Linux Card -->
-        <div class="install-card">
-          <div class="inst-card-header">
-            <svg viewBox="0 0 24 24" fill="currentColor" class="inst-icon"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/></svg>
-            <h3>Linux (x86_64)</h3>
-          </div>
-          <p class="inst-desc">Lade das Tarball (Latest Release) herunter, entpacke es und starte die Binärdatei direkt:</p>
-          <pre class="inst-pre"><code>tar -xzf spotify-screensaver-v1.2-linux.tar.gz
-sudo cp spotify-screensaver-linux-amd64 /usr/local/bin/spotify-screensaver
-spotify-screensaver</code></pre>
-          <div class="inst-action">
-            <a href="https://github.com/benzjeremy/spotify-screensaver/releases/latest" class="btn-sm">Linux Tarball herunterladen (Latest)</a>
-          </div>
-        </div>
-
-        <!-- Windows Card -->
-        <div class="install-card">
-          <div class="inst-card-header">
-            <svg viewBox="0 0 24 24" fill="currentColor" class="inst-icon"><path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801"/></svg>
-            <h3>Windows (x86_64)</h3>
-          </div>
-          <p class="inst-desc">Entpacke das ZIP-Archiv (Latest Release) an einem beliebigen Ort und führe die Exe-Datei aus:</p>
-          <pre class="inst-pre"><code>1. spotify-screensaver-v1.2-windows.zip entpacken
-2. spotify-screensaver.exe doppelt anklicken
-3. Sofort betriebsbereit (Standalone)</code></pre>
-          <div class="inst-action">
-            <a href="https://github.com/benzjeremy/spotify-screensaver/releases/latest" class="btn-sm">Windows ZIP herunterladen (Latest)</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- About / Credits / License Section -->
-  <section class="about-section" id="about">
-    <div class="section-container">
-      <div class="about-layout-grid">
-        <!-- Mitwirkende -->
-        <div class="about-info-box">
-          <h3 class="about-box-title">
-            <svg viewBox="0 0 24 24" fill="currentColor" class="box-ic"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
-            Mitwirkende & Autoren
-          </h3>
-          <div class="author-card">
-            <div class="author-avatar">JB</div>
-            <div class="author-details">
-              <div class="author-name">Jeremy Benz</div>
-              <div class="author-handles">
-                <a href="https://github.com/benzjeremy" target="_blank" rel="noopener">@benzjeremy</a> &bull; 
-                <a href="https://github.com/jbenz1706" target="_blank" rel="noopener">@jbenz1706</a>
-              </div>
-              <div class="author-role">Projektgründer & Lead Developer</div>
-            </div>
-          </div>
-          <div class="ai-assist-box">
-            <span class="ai-label">AI Assistenten (Pair Programming):</span>
-            <div class="ai-chips">
-              <span class="ai-chip">Claude Code</span>
-              <span class="ai-chip">Google Antigravity</span>
-            </div>
-          </div>
-          <div class="copyright-line">&copy; 2026 Jeremy Benz</div>
-        </div>
-
-        <!-- Lizenz -->
-        <div class="about-info-box">
-          <h3 class="about-box-title">
-            <svg viewBox="0 0 24 24" fill="currentColor" class="box-ic"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
-            Freie & Open Source Software
-          </h3>
-          <p class="license-text">
-            Dieses Projekt kommt mit der <strong>GNU General Public License, Version 3 (GPL-3.0)</strong>.
-            Sie garantiert jedem Nutzer die Freiheit, das Programm auszuführen, zu studieren, anzupassen und weiterzuverbreiten.
+        <div data-lang="de" class="visible">
+          <h1 class="hero-title">
+            Spotify auf deinem Desktop.<br>
+            <span class="gradient-text">100% Local-First. Schnell. Ästhetisch.</span>
+          </h1>
+          <p class="hero-subtitle">
+            <strong>spotify-screensaver</strong> ist der elegante, ressourcenschonende Desktop-Bildschirmschoner für Spotify in <strong>Go &amp; WebKitGTK</strong>: Gestochen scharfe OLED-Digitaluhr mit Burn-In Schutz, hardwarebeschleunigter 60 FPS Multi-Mode Canvas Audio-Visualizer, D-Bus MPRIS Mediensteuerung und gehärteter <strong>AES-256-GCM Tresor</strong>.
           </p>
-          <div class="license-links">
-            <a href="https://github.com/benzjeremy/spotify-screensaver?tab=GPL-3.0-1-ov-file" target="_blank" rel="noopener" class="license-cta">
-              Offizielle Lizenzseite auf GitHub einsehen &rarr;
-            </a>
+        </div>
+
+        <div data-lang="en">
+          <h1 class="hero-title">
+            Spotify on Your Desktop.<br>
+            <span class="gradient-text">100% Local-First. Fast. Aesthetic.</span>
+          </h1>
+          <p class="hero-subtitle">
+            <strong>spotify-screensaver</strong> is the lean, elegant desktop screensaver for Spotify built in <strong>Go &amp; WebKitGTK</strong>: Razor-sharp OLED clock with burn-in mitigation, hardware-accelerated 60 FPS canvas audio visualizer, D-Bus MPRIS playback control, and device-bound <strong>AES-256-GCM vault</strong>.
+          </p>
+        </div>
+
+        <!-- Download Action CTAs -->
+        <div class="hero-cta-group" id="download">
+          <a href="https://github.com/benzjeremy/spotify-screensaver/releases/tag/v1.2.1" target="_blank" rel="noopener noreferrer" class="btn-primary">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/></svg>
+            <div>
+              <span class="btn-main-text">Download für Linux</span>
+              <span class="btn-sub-text">v1.2.1 x86_64 (.tar.gz)</span>
+            </div>
+          </a>
+
+          <a href="https://github.com/benzjeremy/spotify-screensaver/releases/tag/v1.2.1" target="_blank" rel="noopener noreferrer" class="btn-secondary">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801"/></svg>
+            <div>
+              <span class="btn-main-text">Download für Windows</span>
+              <span class="btn-sub-text">v1.2.1 x86_64 (.zip)</span>
+            </div>
+          </a>
+        </div>
+
+        <!-- Quick Go Command -->
+        <div class="quick-install-box">
+          <span class="cmd-label">Go Toolchain:</span>
+          <code class="cmd-code" id="goInstallCmd">go install github.com/benzjeremy/spotify-screensaver@latest</code>
+          <button type="button" class="copy-cmd-btn" id="copy-cmd-btn" onclick="copyInstallCmd()">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+            <span id="copyBtnText">Kopieren</span>
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ARCHITEKTUR & BENCHMARKS SPOTLIGHT -->
+    <section class="benchmarks-section" id="architektur">
+      <div class="section-container">
+        <div class="section-header">
+          <span class="section-tag">
+            <span class="lang-de">Rendering &amp; Hardware</span>
+            <span class="lang-en" style="display:none;">Rendering &amp; Hardware</span>
+          </span>
+          <h2 class="section-title">
+            <span class="lang-de">Flüssige Ästhetik ohne Lüfterlärm</span>
+            <span class="lang-en" style="display:none;">Smooth Aesthetics Without Fan Noise</span>
+          </h2>
+          <p class="section-sub">
+            <span class="lang-de">Direkte GPU-Hardwarebeschleunigung trifft auf radikal sparsamen RAM-Verbrauch und echten OLED-Schutz.</span>
+            <span class="lang-en" style="display:none;">Hardware GPU acceleration meets radical low-memory efficiency and OLED longevity.</span>
+          </p>
+        </div>
+
+        <div class="benchmarks-grid">
+          <div class="benchmark-card">
+            <div class="benchmark-stat">60 FPS</div>
+            <div class="benchmark-label">Flüssiges Canvas-Rendering</div>
+            <div class="benchmark-desc">Hardwarebeschleunigte Animationszyklen über WebKitGTK / Chromium App-Mode ohne Frame-Drops.</div>
           </div>
-          <div class="ext-links-row">
-            <a href="https://github.com/benzjeremy/spotify-screensaver" target="_blank" rel="noopener" class="link-btn">
-              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
-              <span>GitHub Quellcode</span>
-            </a>
-            <a href="https://github.com/benzjeremy/spotify-screensaver/releases" target="_blank" rel="noopener" class="link-btn">
-              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
-              <span>Alle Releases</span>
-            </a>
+
+          <div class="benchmark-card">
+            <div class="benchmark-stat">~30 MB</div>
+            <div class="benchmark-label">RAM-Verbrauch im Leerlauf</div>
+            <div class="benchmark-desc">Mehr als 15x weniger Arbeitsspeicher als ein reguläres Electron-Desktop-Programm.</div>
+          </div>
+
+          <div class="benchmark-card">
+            <div class="benchmark-stat">100%</div>
+            <div class="benchmark-label">OLED Burn-In Schutz</div>
+            <div class="benchmark-desc">Subtiles Pixel-Shifting alle 60 Sekunden und tiefschwarze Hintergründe schützen OLED- und AMOLED-Panels.</div>
+          </div>
+
+          <div class="benchmark-card">
+            <div class="benchmark-stat">D-Bus</div>
+            <div class="benchmark-label">Native Linux MPRIS Steuerung</div>
+            <div class="benchmark-desc">Direkte Medienabfrage über den System-Bus. Funktioniert auch bei Offline-Wiedergabe oder im lokalen Netzwerk.</div>
           </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- Footer -->
+    <!-- KEY FEATURES GRID -->
+    <section class="features-section" id="features">
+      <div class="section-container">
+        <div class="section-header">
+          <span class="section-tag">
+            <span class="lang-de">Funktionsübersicht</span>
+            <span class="lang-en" style="display:none;">Features Overview</span>
+          </span>
+          <h2 class="section-title">
+            <span class="lang-de">Entwickelt für Audiophile &amp; Minimalisten</span>
+            <span class="lang-en" style="display:none;">Crafted for Audiophiles &amp; Minimalists</span>
+          </h2>
+          <p class="section-sub">
+            <span class="lang-de">Perfekte visuelle Begleitung für deinen Schreibtisch während Spotify läuft.</span>
+            <span class="lang-en" style="display:none;">The ultimate ambient visual companion for your desktop while music plays.</span>
+          </p>
+        </div>
+
+        <div class="feature-grid">
+          <!-- 1 -->
+          <article class="feature-card">
+            <div class="f-card-icon">🎵</div>
+            <h3>Multi-Mode Audio Visualizer</h3>
+            <p>Wähle zwischen sanften Frequenzbalken, dynamischen Wellenformen, kreisförmigem Bass-Puls oder kosmischem Sternenfeld.</p>
+          </article>
+
+          <!-- 2 -->
+          <article class="feature-card">
+            <div class="f-card-icon">🕒</div>
+            <h3>OLED-Digitaluhr &amp; Datum</h3>
+            <p>Große, elegante Zeitanzeige mit optionalen Sekunden, aktuellem Wochentag und Datum. Perfekt als Raum-Display.</p>
+          </article>
+
+          <!-- 3 -->
+          <article class="feature-card">
+            <div class="f-card-icon">🎨</div>
+            <h3>Dynamische Cover-Palette</h3>
+            <p>Extrahiert automatisch die dominante Farbharmonie des aktuellen Album-Covers und passt Visualizer und Akzente fließend an.</p>
+          </article>
+
+          <!-- 4 -->
+          <article class="feature-card">
+            <div class="f-card-icon">🎛️</div>
+            <h3>D-Bus MPRIS &amp; Media-Keys</h3>
+            <p>Interaktive Mediensteuerung: Play/Pause, Track-Wechsel, Lautstärkeregelung und interaktiver Track-Scrubber direkt auf dem Screen.</p>
+          </article>
+
+          <!-- 5 -->
+          <article class="feature-card">
+            <div class="f-card-icon">🛡️</div>
+            <h3>OLED Burn-in Protection</h3>
+            <p>Automatisches periodisches Verschieben aller Bildelemente im Subpixelbereich verhindert dauerhaftes Einbrennen auf High-End Displays.</p>
+          </article>
+
+          <!-- 6 -->
+          <article class="feature-card">
+            <div class="f-card-icon">🏆</div>
+            <h3>Awesome-Go Auszeichnung</h3>
+            <p>Offiziell aufgenommen in die renommierte <a href="https://github.com/avelino/awesome-go#other-software" target="_blank" rel="noopener noreferrer">Awesome-Go</a> Sammlung kuratierter Go-Software.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- INSTALLATION SECTION -->
+    <section class="install-section" id="install">
+      <div class="section-container">
+        <div class="section-header">
+          <span class="section-tag">
+            <span class="lang-de">Setup</span>
+            <span class="lang-en" style="display:none;">Setup</span>
+          </span>
+          <h2 class="section-title">
+            <span class="lang-de">Schnelle Installation</span>
+            <span class="lang-en" style="display:none;">Fast Installation</span>
+          </h2>
+          <p class="section-sub">
+            <span class="lang-de">Vorkompilierte Multi-Platform Releases oder direkte Installation per Go Toolchain.</span>
+            <span class="lang-en" style="display:none;">Standalone compiled binaries or install directly with the Go toolchain.</span>
+          </p>
+        </div>
+
+        <div class="install-grid">
+          <!-- Linux Card -->
+          <div class="install-card">
+            <div>
+              <div class="inst-card-header">
+                <span style="font-size: 24px;">🐧</span>
+                <h3>Linux (x86_64)</h3>
+              </div>
+              <p class="inst-desc">Tarball herunterladen, entpacken und direkt mit nativer WebKitGTK-Hardwarebeschleunigung starten:</p>
+              <pre class="inst-pre"><code>tar -xzf spotify-screensaver-*-linux.tar.gz
+chmod +x spotify-screensaver
+./spotify-screensaver</code></pre>
+            </div>
+            <div>
+              <a href="https://github.com/benzjeremy/spotify-screensaver/releases/latest" target="_blank" rel="noopener noreferrer" class="btn-sm">
+                Linux Tarball (Latest) herunterladen →
+              </a>
+            </div>
+          </div>
+
+          <!-- Windows Card -->
+          <div class="install-card">
+            <div>
+              <div class="inst-card-header">
+                <span style="font-size: 24px;">🪟</span>
+                <h3>Windows (x86_64)</h3>
+              </div>
+              <p class="inst-desc">ZIP-Archiv entpacken und die Standalone-Executable ohne Installation starten:</p>
+              <pre class="inst-pre"><code>1. spotify-screensaver-*-windows.zip entpacken
+2. spotify-screensaver.exe starten
+3. Spotify öffnen und Visualizer genießen</code></pre>
+            </div>
+            <div>
+              <a href="https://github.com/benzjeremy/spotify-screensaver/releases/latest" target="_blank" rel="noopener noreferrer" class="btn-sm">
+                Windows ZIP (Latest) herunterladen →
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT & CREDITS SECTION -->
+    <section class="about-section" id="about">
+      <div class="section-container">
+        <div class="about-layout-grid">
+          
+          <!-- Mitwirkende -->
+          <div class="about-info-box">
+            <div>
+              <h3 class="about-box-title">👥 Mitwirkende &amp; Autoren</h3>
+              <div class="author-card">
+                <div class="author-avatar">JB</div>
+                <div>
+                  <div class="author-name">Jeremy Benz</div>
+                  <div class="author-handles">
+                    <a href="https://github.com/benzjeremy" target="_blank" rel="noopener noreferrer">@benzjeremy</a> &bull; 
+                    <a href="https://github.com/jbenz1706" target="_blank" rel="noopener noreferrer">@jbenz1706</a>
+                  </div>
+                  <div class="author-role">Projektgründer &amp; Lead Systems Developer</div>
+                </div>
+              </div>
+
+              <div class="ai-assist-box">
+                <span class="ai-label">AI Pair Programming:</span>
+                <div class="ai-chips">
+                  <span class="ai-chip">Google Antigravity</span>
+                  <span class="ai-chip">Claude Code</span>
+                </div>
+              </div>
+            </div>
+
+            <div style="font-size: 12px; color: var(--text-muted); padding-top: 14px; border-top: 1px solid var(--border-subtle);">
+              © 2026 Jeremy Benz · Nordrhein-Westfalen, Deutschland
+            </div>
+          </div>
+
+          <!-- Lizenz & Sicherheit -->
+          <div class="about-info-box">
+            <div>
+              <h3 class="about-box-title">⚖️ Freie Software (GNU GPL-3.0)</h3>
+              <p class="license-text">
+                Dieses Projekt steht unter der <strong>GNU General Public License v3.0 (GPL-3.0)</strong>. Sie garantiert jedem Nutzer die Freiheit, das Programm auszuführen, den Quellcode zu studieren, anzupassen und weiterzuverbreiten.
+              </p>
+              <a href="https://github.com/benzjeremy/spotify-screensaver/blob/main/LICENSE" target="_blank" rel="noopener noreferrer" class="license-cta">
+                Offizielle Lizenzdatei auf GitHub einsehen →
+              </a>
+            </div>
+
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+              <a href="https://github.com/benzjeremy/spotify-screensaver" target="_blank" rel="noopener noreferrer" class="btn-card">
+                <span>Quellcode auf GitHub</span>
+              </a>
+              <a href="https://benzjeremy.github.io/kontakt.html" class="btn-card highlight">
+                <span>Sicherheitslücke melden</span>
+              </a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Site Footer -->
   <footer class="site-footer">
     <div class="footer-container">
       <div class="footer-left">
-        <img src="favicon.svg" alt="spotify-screensaver" class="footer-logo" width="28" height="28">
-        <span>spotify-screensaver &bull; Entwickelt von Jeremy Benz &bull; GPL-3.0 Lizenz</span>
+        <img src="favicon.svg" alt="spotify-screensaver Logo" width="24" height="24">
+        <span>spotify-screensaver · Entwickelt von Jeremy Benz · GNU GPL-3.0 Lizenz</span>
       </div>
-      <div class="footer-links">
-        <a href="wiki/">Wiki & Anleitung</a>
-        <a href="https://github.com/benzjeremy/spotify-screensaver">GitHub</a>
+
+      <nav class="footer-links" aria-label="Footer Navigation">
+        <a href="https://benzjeremy.github.io/">Startseite</a>
+        <a href="https://benzjeremy.github.io/about.html">Über mich</a>
+        <a href="https://benzjeremy.github.io/kontakt.html">Kontakt</a>
+        <a href="wiki/">Wiki &amp; Anleitung</a>
         <a href="https://github.com/benzjeremy/spotify-screensaver/releases">Releases</a>
-        <a href="https://github.com/benzjeremy/spotify-screensaver/issues">Fehler melden</a>
-        <a href="https://github.com/benzjeremy/spotify-screensaver?tab=GPL-3.0-1-ov-file">Lizenz</a>
         <a href="https://benzjeremy.github.io/impressum.html">Impressum</a>
         <a href="https://benzjeremy.github.io/datenschutz.html">Datenschutz</a>
-      </div>
+        <a href="https://github.com/benzjeremy/spotify-screensaver" target="_blank" rel="noopener noreferrer">GitHub</a>
+      </nav>
     </div>
   </footer>
 
   <script>
+    // Copy Command
     function copyInstallCmd() {
       const code = document.getElementById('goInstallCmd').textContent;
+      const btnText = document.getElementById('copyBtnText');
+      const btn = document.getElementById('copy-cmd-btn');
       navigator.clipboard.writeText(code).then(() => {
-        const btnText = document.getElementById('copyBtnText');
-        btnText.textContent = 'Kopiert!';
-        setTimeout(() => { btnText.textContent = 'Kopieren'; }, 2000);
+        btnText.textContent = 'Kopiert! ✓';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btnText.textContent = 'Kopieren';
+          btn.classList.remove('copied');
+        }, 2200);
       });
     }
 
-    // Mobile Navigation Toggle
+    // Mobile Drawer Toggle
     const mobileToggle = document.getElementById('mobile-toggle');
     const mainNav = document.getElementById('main-nav');
     if (mobileToggle && mainNav) {
       mobileToggle.addEventListener('click', () => {
         const isOpen = mainNav.classList.toggle('open');
         mobileToggle.setAttribute('aria-expanded', isOpen);
-        mobileToggle.innerHTML = isOpen ? '✕' : '☰';
-      });
-
-      mainNav.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', () => {
-          if (mainNav.classList.contains('open')) {
-            mainNav.classList.remove('open');
-            mobileToggle.setAttribute('aria-expanded', 'false');
-            mobileToggle.innerHTML = '☰';
-          }
-        });
-      });
-
-      document.addEventListener('click', (e) => {
-        if (mainNav.classList.contains('open') && !mainNav.contains(e.target) && !mobileToggle.contains(e.target)) {
-          mainNav.classList.remove('open');
-          mobileToggle.setAttribute('aria-expanded', 'false');
-          mobileToggle.innerHTML = '☰';
-        }
       });
     }
+
+    // Language Toggle
+    function setLang(lang) {
+      document.querySelectorAll('[data-lang]').forEach(el => {
+        if (el.getAttribute('data-lang') === lang) {
+          el.classList.add('visible');
+        } else {
+          el.classList.remove('visible');
+        }
+      });
+      document.querySelectorAll('.lang-de').forEach(el => el.style.display = lang === 'de' ? '' : 'none');
+      document.querySelectorAll('.lang-en').forEach(el => el.style.display = lang === 'en' ? '' : 'none');
+      
+      const btnDe = document.getElementById('btn-lang-de');
+      const btnEn = document.getElementById('btn-lang-en');
+      if (btnDe && btnEn) {
+        btnDe.classList.toggle('active', lang === 'de');
+        btnEn.classList.toggle('active', lang === 'en');
+      }
+      try { localStorage.setItem('site_lang', lang); } catch (e) {}
+    }
+
+    try {
+      const saved = localStorage.getItem('site_lang');
+      if (saved === 'en' || saved === 'de') setLang(saved);
+    } catch (e) {}
   </script>
 </body>
 </html>

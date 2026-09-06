@@ -1,12 +1,12 @@
 :root {
-  --bg: #07090e;
-  --sidebar-bg: #0c1018;
-  --card-bg: rgba(14, 19, 30, 0.85);
+  --bg: #080a0f;
+  --sidebar-bg: #0e121b;
+  --card-bg: #141a26;
   --border: rgba(255, 255, 255, 0.08);
   --border-strong: rgba(255, 255, 255, 0.16);
-  --accent: #1db954;
+  --accent: #10b981;
   --accent-cyan: #38bdf8;
-  --accent-glow: rgba(29, 185, 84, 0.35);
+  --accent-glow: rgba(16, 185, 129, 0.35);
   --text: #f8fafc;
   --text-muted: #94a3b8;
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, system-ui, sans-serif;
