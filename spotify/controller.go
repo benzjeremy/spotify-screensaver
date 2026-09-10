@@ -10,12 +10,14 @@ import (
 	"sync"
 	"time"
 
+	"github.com/benzjeremy/spotify-screensaver/palette"
 	"github.com/benzjeremy/spotify-screensaver/store"
 )
 
 type Controller struct {
 	mu           sync.RWMutex
 	store        *store.SecureStore
+	extractor    *palette.Extractor
 	lastState    PlaybackState
 	lastPolled   time.Time
 	demoPosition int64
@@ -25,17 +27,20 @@ type Controller struct {
 func NewController(s *store.SecureStore) *Controller {
 	return &Controller{
 		store:      s,
+		extractor:  palette.NewExtractor(),
 		demoTicker: time.Now(),
 		lastState: PlaybackState{
-			IsPlaying:     false,
-			Title:         "Bereit für Musik",
-			Artist:        "Spotify",
-			Album:         "Screensaver",
-			ArtURL:        "",
-			DurationMs:    215000,
-			VolumePercent: 75,
-			Source:        "demo",
-			IsConnected:   false,
+			IsPlaying:      false,
+			Title:          "Bereit für Musik",
+			Artist:         "Spotify",
+			Album:          "Screensaver",
+			ArtURL:         "",
+			PrimaryColor:   "#1db954",
+			SecondaryColor: "#121212",
+			DurationMs:     215000,
+			VolumePercent:  75,
+			Source:         "demo",
+			IsConnected:    false,
 		},
 	}
 }
@@ -47,6 +52,7 @@ func (c *Controller) GetPlaybackState() PlaybackState {
 
 	// 1. Try Linux MPRIS via playerctl
 	if state, ok := c.queryMPRIS(); ok {
+		c.enrichColors(&state)
 		c.lastState = state
 		c.lastPolled = time.Now()
 		return state
@@ -54,6 +60,7 @@ func (c *Controller) GetPlaybackState() PlaybackState {
 
 	// 2. Try spotify_player CLI
 	if state, ok := c.querySpotifyPlayer(); ok {
+		c.enrichColors(&state)
 		c.lastState = state
 		c.lastPolled = time.Now()
 		return state
@@ -279,3 +286,20 @@ func (c *Controller) Seek(seconds int) {
 		exec.Command("playerctl", "-p", "spotify,spotify_player,%any", "position", strconv.Itoa(seconds)).Run()
 	}
 }
+
+func (c *Controller) enrichColors(state *PlaybackState) {
+	if state.ArtURL != "" && strings.HasPrefix(state.ArtURL, "http") {
+		if colors, err := c.extractor.ExtractFromURL(state.ArtURL); err == nil {
+			state.PrimaryColor = colors.Primary
+			state.SecondaryColor = colors.Secondary
+			return
+		}
+	}
+	if state.PrimaryColor == "" {
+		state.PrimaryColor = "#1db954"
+	}
+	if state.SecondaryColor == "" {
+		state.SecondaryColor = "#121212"
+	}
+}
+

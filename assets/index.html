@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Spotify Screensaver v1.1</title>
+  <title>Spotify Screensaver v1.3</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body data-theme="spotify">
@@ -118,11 +118,17 @@
             <option value="bars">Frequenzbalken mit Peak-Hold (Bars)</option>
             <option value="wave">Fließende Oszillograph-Welle (Wave)</option>
             <option value="mirrored">Gespiegelte Doppelsäulen (Mirrored)</option>
+            <option value="circular">Zirkuläres Radial-Spektrum (Circular)</option>
           </select>
         </div>
         <div class="form-group">
           <label for="cfgSensitivity">⚡ Visualizer-Intensität:</label>
           <input type="range" id="cfgSensitivity" min="30" max="150" value="80" class="vol-range">
+        </div>
+        <div class="form-group-checkbox">
+          <label>
+            <input type="checkbox" id="cfgDynamicColors" checked> Dynamische Cover-Palette (Adaptive Glow & Accents)
+          </label>
         </div>
         <div class="form-group-checkbox">
           <label>

@@ -40,6 +40,7 @@
   const cfgSensitivity = document.getElementById("cfgSensitivity");
   const cfgClockFormat = document.getElementById("cfgClockFormat");
   const cfgShowSeconds = document.getElementById("cfgShowSeconds");
+  const cfgDynamicColors = document.getElementById("cfgDynamicColors");
   const themeSwatches = document.querySelectorAll(".btn-theme-swatch");
 
   // 0. Session Token Authentication
@@ -48,6 +49,48 @@
   if (sessionToken) {
     sessionStorage.setItem("spotify_screensaver_token", sessionToken);
   }
+
+  let dynamicColors = true;
+  let liveBands = new Uint8Array(64);
+  let hasLiveAudio = false;
+  let audioWs = null;
+
+  function connectAudioStream() {
+    try {
+      const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+      const host = window.location.host || "127.0.0.1:43210";
+      const wsUrl = `${protocol}//${host}/api/audio-stream?token=${encodeURIComponent(sessionToken)}`;
+
+      audioWs = new WebSocket(wsUrl);
+      audioWs.binaryType = "arraybuffer";
+
+      audioWs.onopen = () => {
+        hasLiveAudio = true;
+      };
+
+      audioWs.onmessage = (event) => {
+        if (event.data instanceof ArrayBuffer) {
+          const arr = new Uint8Array(event.data);
+          if (arr.length >= 64) {
+            liveBands = arr;
+            hasLiveAudio = true;
+          }
+        }
+      };
+
+      audioWs.onclose = () => {
+        hasLiveAudio = false;
+        setTimeout(connectAudioStream, 2000);
+      };
+
+      audioWs.onerror = () => {
+        hasLiveAudio = false;
+      };
+    } catch (e) {
+      hasLiveAudio = false;
+    }
+  }
+  connectAudioStream();
 
   function getAuthHeaders(existing = {}) {
     const headers = { ...existing };
@@ -156,6 +199,17 @@
 
     if (data.art_url && data.art_url.startsWith("http")) {
       coverImgEl.src = data.art_url;
+    }
+
+    // Dynamic cover palette integration (smooth transition)
+    if (dynamicColors && data.primary_color) {
+      document.documentElement.style.setProperty("--accent-primary", data.primary_color);
+      const secColor = data.secondary_color || data.primary_color;
+      document.documentElement.style.setProperty("--accent-glow", `${data.primary_color}66`);
+      cachedPrimary = data.primary_color;
+      cachedGlow = `${data.primary_color}77`;
+      ambientGlowEl.style.background = `radial-gradient(circle, ${data.primary_color}55 0%, ${secColor}22 45%, transparent 70%)`;
+      updateCachedGradient();
     }
 
     if (data.is_playing) {
@@ -347,8 +401,10 @@
       ctx.beginPath();
       ctx.moveTo(0, height / 2);
       for (let x = 0; x < width; x += 5) {
+        const binIdx = Math.min(63, Math.floor((x / width) * 64));
+        const liveAmp = hasLiveAudio ? (liveBands[binIdx] / 255.0) : (currentState.is_playing ? 0.35 : 0.12);
         const freq = currentState.is_playing ? 0.015 : 0.008;
-        const amp = (currentState.is_playing ? height * 0.35 : height * 0.12) * sensFactor;
+        const amp = (height * liveAmp) * sensFactor;
         const y = height / 2 + Math.sin(x * freq + phase) * amp * Math.cos(x * 0.005 + phase * 0.5);
         ctx.lineTo(x, y);
       }
@@ -367,7 +423,9 @@
       ctx.fillStyle = cachedPrimary;
       for (let i = 0; i < numBars; i++) {
         const b = bars[i];
-        if (currentState.is_playing) {
+        if (hasLiveAudio && liveBands[i] > 0) {
+          b.targetHeight = (liveBands[i] / 255.0) * (centerY * 0.9) * sensFactor;
+        } else if (currentState.is_playing) {
           const freqWave = Math.sin(phase + (i * 0.35)) * 0.5 + 0.5;
           const beatBounce = Math.sin(phase * 2.2 + (i % 4)) > 0.6 ? 1 : 0.2;
           b.targetHeight = (freqWave * 0.6 + beatBounce * 0.3) * (centerY * 0.85) * sensFactor;
@@ -379,6 +437,47 @@
         const x = i * (barWidth + spacing) + spacing / 2;
         ctx.fillRect(x, centerY - b.height, barWidth, b.height * 2);
       }
+    } else if (visualizerMode === "circular") {
+      const cx = width / 2;
+      const cy = height / 2;
+      const baseRadius = Math.min(width, height) * 0.28;
+      const angleStep = (Math.PI * 2) / 64;
+
+      ctx.save();
+      ctx.translate(cx, cy);
+
+      for (let i = 0; i < 64; i++) {
+        let bVal = 0;
+        if (hasLiveAudio && liveBands[i] > 0) {
+          bVal = (liveBands[i] / 255.0) * sensFactor;
+        } else if (currentState.is_playing) {
+          const freqWave = Math.sin(phase + (i * 0.35)) * 0.5 + 0.5;
+          const beatBounce = Math.sin(phase * 2.2 + (i % 4)) > 0.6 ? 1 : 0.2;
+          bVal = (freqWave * 0.6 + beatBounce * 0.3) * sensFactor;
+        } else {
+          bVal = (Math.sin(phase + i * 0.2) * 0.2 + 0.2) * 0.4;
+        }
+
+        const barLen = Math.max(4, bVal * (Math.min(width, height) * 0.18));
+        const rad = i * angleStep + phase * 0.1;
+        const x1 = Math.cos(rad) * baseRadius;
+        const y1 = Math.sin(rad) * baseRadius;
+        const x2 = Math.cos(rad) * (baseRadius + barLen);
+        const y2 = Math.sin(rad) * (baseRadius + barLen);
+
+        ctx.strokeStyle = cachedPrimary;
+        ctx.lineWidth = 3.5 * window.devicePixelRatio;
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+
+        ctx.fillStyle = "#ffffff";
+        ctx.beginPath();
+        ctx.arc(x2, y2, 2 * window.devicePixelRatio, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
     } else {
       const barWidth = (width / numBars) * 0.65;
       const spacing = (width / numBars) * 0.35;
@@ -388,7 +487,9 @@
 
       for (let i = 0; i < numBars; i++) {
         const b = bars[i];
-        if (currentState.is_playing) {
+        if (hasLiveAudio && liveBands[i] > 0) {
+          b.targetHeight = (liveBands[i] / 255.0) * (height * 0.85) * sensFactor;
+        } else if (currentState.is_playing) {
           const freqWave = Math.sin(phase + (i * 0.35)) * 0.5 + 0.5;
           const beatBounce = Math.sin(phase * 2.2 + (i % 4)) > 0.6 ? 1 : 0.2;
           const noise = Math.random() * 0.25;
@@ -462,6 +563,7 @@
         cfgShowSeconds.checked = cfg.show_seconds ?? true;
         cfgVisualizer.value = cfg.visualizer_mode || "bars";
         cfgSensitivity.value = cfg.sensitivity || 80;
+        if (cfgDynamicColors) cfgDynamicColors.checked = dynamicColors;
         if (cfg.theme_accent) applyTheme(cfg.theme_accent);
       }
     } catch (e) {}
@@ -478,6 +580,7 @@
     showSeconds = cfgShowSeconds.checked;
     visualizerMode = cfgVisualizer.value;
     visualizerSensitivity = parseInt(cfgSensitivity.value, 10) || 80;
+    if (cfgDynamicColors) dynamicColors = cfgDynamicColors.checked;
 
     const payload = {
       clock_format_24h: clock24H,

@@ -10,12 +10,14 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/benzjeremy/spotify-screensaver/audio"
+	"github.com/benzjeremy/spotify-screensaver/daemon"
 	"github.com/benzjeremy/spotify-screensaver/server"
 	"github.com/benzjeremy/spotify-screensaver/spotify"
 	"github.com/benzjeremy/spotify-screensaver/store"
 )
 
-const Version = "v1.2.1"
+const Version = "v1.3"
 
 //go:embed assets/*
 var embeddedAssets embed.FS
@@ -24,6 +26,7 @@ func main() {
 	portFlag := flag.Int("port", 43210, "Port für internen HTTP-Server (nur 127.0.0.1)")
 	fullscreenFlag := flag.Bool("fullscreen", false, "Screensaver direkt im Vollbildmodus starten")
 	browserFlag := flag.Bool("browser", false, "Standard-Browser anstelle des WebKitGTK-Fensters verwenden")
+	idleTimeoutFlag := flag.Int("idle-timeout", 0, "Automatische Aktivierung nach N Sekunden Inaktivität (0 = deaktiviert)")
 	versionFlag := flag.Bool("version", false, "Zeigt die Programmversion an")
 	flag.Parse()
 
@@ -43,31 +46,50 @@ func main() {
 	// 2. Initialisiere Spotify Controller
 	ctrl := spotify.NewController(secStore)
 
-	// 3. Bereite eingebettete Assets vor
+	// 3. Initialisiere Hardware Audio-Capture & FFT Engine
+	audioEngine := audio.NewPlatformCaptureEngine()
+	if err := audioEngine.Start(); err != nil {
+		log.Printf("[Audio] Audio-Engine Fallback aktiv: %v\n", err)
+	}
+
+	// 4. Bereite eingebettete Assets vor
 	assetsSubFS, err := fs.Sub(embeddedAssets, "assets")
 	if err != nil {
 		log.Fatalf("[Assets] Fehler beim Laden der eingebetteten Assets: %v\n", err)
 	}
 
-	// 4. Starte gesicherten lokalen HTTP Server (nur 127.0.0.1, Anti-CSRF, Anti-DNS-Rebinding)
-	srv := server.NewServer(*portFlag, ctrl, secStore, assetsSubFS)
+	// 5. Starte gesicherten lokalen HTTP Server (nur 127.0.0.1, Anti-CSRF, Anti-DNS-Rebinding)
+	srv := server.NewServer(*portFlag, ctrl, secStore, assetsSubFS, audioEngine)
 	appURL, err := srv.Start()
 	if err != nil {
 		log.Fatalf("[Server] Fehler beim Starten des Webservers: %v\n", err)
 	}
 	log.Printf("[Server] Interner Webserver aktiv unter: %s\n", appURL)
 
-	// 5. Signal-Handling für sauberes Beenden
+	// 6. Idle-Daemon starten (falls konfiguriert)
+	var idleMon *daemon.Monitor
+	if *idleTimeoutFlag > 0 {
+		idleMon = daemon.NewMonitor(*idleTimeoutFlag, func() {
+			log.Println("[Idle] Benutzerinaktivität festgestellt – Screensaver aktiv")
+		})
+		idleMon.Start()
+	}
+
+	// 7. Signal-Handling für sauberes Beenden
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, os.Interrupt, syscall.SIGTERM)
 	go func() {
 		<-sigChan
 		log.Println("\n[Shutdown] Beende Spotify Screensaver sauber...")
+		if idleMon != nil {
+			idleMon.Stop()
+		}
+		audioEngine.Stop()
 		srv.Stop()
 		os.Exit(0)
 	}()
 
-	// 6. Starte Benutzeroberfläche
+	// 8. Starte Benutzeroberfläche
 	if *browserFlag {
 		log.Printf("[GUI] Starte im Browser-Modus: %s\n", appURL)
 		LaunchGUI("Spotify Screensaver", appURL, 1200, 800, false)

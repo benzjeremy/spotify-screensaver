@@ -12,6 +12,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/benzjeremy/spotify-screensaver/audio"
 	"github.com/benzjeremy/spotify-screensaver/spotify"
 	"github.com/benzjeremy/spotify-screensaver/store"
 )
@@ -21,10 +22,12 @@ type Server struct {
 	ctrl         *spotify.Controller
 	store        *store.SecureStore
 	assets       fs.FS
+	audioEngine  audio.Engine
 	listener     net.Listener
 	httpServer   *http.Server
 	sessionToken string
 	mu           sync.Mutex
+	wsHub        *AudioHub
 }
 
 func generateSessionToken() string {
@@ -35,13 +38,15 @@ func generateSessionToken() string {
 	return hex.EncodeToString(b)
 }
 
-func NewServer(port int, ctrl *spotify.Controller, store *store.SecureStore, assets fs.FS) *Server {
+func NewServer(port int, ctrl *spotify.Controller, store *store.SecureStore, assets fs.FS, audioEngine audio.Engine) *Server {
 	return &Server{
 		port:         port,
 		ctrl:         ctrl,
 		store:        store,
 		assets:       assets,
+		audioEngine:  audioEngine,
 		sessionToken: generateSessionToken(),
+		wsHub:        NewAudioHub(audioEngine),
 	}
 }
 
@@ -80,6 +85,9 @@ func (s *Server) Start() (string, error) {
 	mux.HandleFunc("/api/seek", s.handleSeek)
 	mux.HandleFunc("/api/volume", s.handleVolume)
 	mux.HandleFunc("/api/config", s.handleConfig)
+	mux.HandleFunc("/api/audio-stream", s.HandleAudioStream)
+
+	s.wsHub.Start()
 
 	// Wrap with security middleware
 	handler := s.securityMiddleware(mux)
@@ -270,6 +278,9 @@ func (s *Server) handleConfig(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) Stop() {
+	if s.wsHub != nil {
+		s.wsHub.Stop()
+	}
 	if s.httpServer != nil {
 		s.httpServer.Close()
 	}

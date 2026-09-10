@@ -5,15 +5,27 @@
 [![CI](https://github.com/benzjeremy/spotify-screensaver/actions/workflows/ci.yml/badge.svg)](https://github.com/benzjeremy/spotify-screensaver/actions)
 [![Coverage](https://codecov.io/gh/benzjeremy/spotify-screensaver/branch/main/graph/badge.svg)](https://app.codecov.io/gh/benzjeremy/spotify-screensaver)
 [![Awesome Go](https://awesome.re/mentioned-badge.svg)](https://github.com/avelino/awesome-go)
-[![Release](https://img.shields.io/badge/Release-Latest-emerald)](https://github.com/benzjeremy/spotify-screensaver/releases/latest)
+[![Release](https://img.shields.io/badge/Release-v1.3-emerald)](https://github.com/benzjeremy/spotify-screensaver/releases/latest)
 [![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0-blue.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-Linux%20%7C%20Windows-lightgrey.svg)]()
 
-> Ein eleganter, ressourcenschonender Desktop-Bildschirmschoner mit **Live-OLED-Uhrzeit**, **Spotify Song-Metadaten**, **hardwarebeschleunigtem Multi-Mode HTML5 Canvas Visualizer** und **Musiksteuerung** für Linux (WebKitGTK) und Windows (App-Mode). **100% Local-First & Zero Bloat (Kein KI-Overhead).**
+> Ein eleganter, ressourcenschonender Desktop-Bildschirmschoner mit **Live-OLED-Uhrzeit**, **Spotify Song-Metadaten**, **hardwaregekoppelter Audio-Spektrumanalyse (PulseAudio/PipeWire)**, **dynamischer Cover-Farbpalette**, **Zirkulärem Spektrum** und **Inaktivitäts-Daemon** für Linux (WebKitGTK) und Windows (App-Mode). **100% Local-First & Zero Bloat.**
 
 ---
 
-## ✨ Features in v1.1 (Hotfix & Layout Upgrade)
+## ✨ Features & Highlights in v1.3
+
+- 🎛️ **Echte Audio-Spektrumanalyse (PulseAudio / PipeWire / WASAPI):**
+  - Direkter Hardware-Abgriff des Systemsounds via Monitor-Sink.
+  - 64-Band FFT-Analyse (Cooley-Tukey Radix-2) mit 60 FPS WebSocket-Streaming (`/api/audio-stream`).
+  - Latenzfreie Visualisierung echter Bässe, Mitten und Höhen statt reiner Simulation.
+- 🎨 **Dynamische Cover-Palette (Adaptive Glow & Accents):**
+  - Schnelle Farbraumreduktion & Dominanzextraktion (K-Means / Quantisierung) in Go.
+  - Automatische, weiche 1.2s CSS/Canvas-Farbüberblendung des Screensavers an die Primär- und Sekundärfarben des Albumcovers.
+- 🌊 **Neuer Zirkulärer Visualizer-Modus (Circular):**
+  - Strahlenförmiges 360°-Spektrum um das Albumcover mit glühenden Frequenzspitzen.
+- 💤 **Screensaver Idle-Daemon (`--idle-timeout=N`):**
+  - Überwacht Benutzerinaktivität via `xprintidle` / D-Bus / Win32 und aktiviert den Bildschirmschoner vollautomatisch.
 
 - 🕒 **OLED Digitaluhr & deutsches Datum:**
   - Große Neon-Zeitanzeige mit konfigurierbarer Sekundenanzeige (ein-/ausblendbar) und 12h/24h-Umschaltung.

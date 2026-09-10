@@ -6,6 +6,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/benzjeremy/spotify-screensaver/audio"
 	"github.com/benzjeremy/spotify-screensaver/spotify"
 	"github.com/benzjeremy/spotify-screensaver/store"
 )
@@ -16,8 +17,9 @@ func TestSecurityMiddlewareAntiDNSRebinding(t *testing.T) {
 		t.Fatalf("NewSecureStore error: %v", err)
 	}
 
+	audioEngine := audio.NewFallbackSynthesizer()
 	ctrl := spotify.NewController(secStore)
-	srv := NewServer(0, ctrl, secStore, nil)
+	srv := NewServer(0, ctrl, secStore, nil, audioEngine)
 	handler := srv.securityMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	}))
@@ -61,8 +63,9 @@ func TestSecurityMiddlewareTokenAuth(t *testing.T) {
 		t.Fatalf("NewSecureStore error: %v", err)
 	}
 
+	audioEngine := audio.NewFallbackSynthesizer()
 	ctrl := spotify.NewController(secStore)
-	srv := NewServer(0, ctrl, secStore, nil)
+	srv := NewServer(0, ctrl, secStore, nil, audioEngine)
 	handler := srv.securityMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	}))
