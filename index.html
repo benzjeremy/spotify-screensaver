@@ -6,15 +6,15 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self';" />
   <meta http-equiv="X-Content-Type-Options" content="nosniff" />
   <meta name="referrer" content="strict-origin-when-cross-origin" />
-  <title>spotify-screensaver · Eleganter Desktop Bildschirmschoner in Go · v1.3</title>
-  <meta name="description" content="Offizielle Website für spotify-screensaver: Der elegante Desktop-Bildschirmschoner für Spotify in Go & WebKitGTK. OLED-Digitaluhr, 60 FPS Canvas Visualizer, MPRIS D-Bus Steuerung und Awesome-Go gelistet.">
+  <title>spotify-screensaver · Eleganter Desktop Bildschirmschoner in Go · v1.4</title>
+  <meta name="description" content="Offizielle Website für spotify-screensaver: Der elegante Desktop-Bildschirmschoner für Spotify in Go & WebKitGTK. Intelligentes Ad-Handling, Clean Cover Layout, OLED-Digitaluhr, 60 FPS Audio-FFT und Awesome-Go gelistet.">
   <meta property="og:type" content="website">
   <meta property="og:title" content="spotify-screensaver · Desktop Bildschirmschoner in Go">
-  <meta property="og:description" content="Nativer Spotify Bildschirmschoner in Go & WebKitGTK. OLED-Digitaluhr, 60 FPS Audio-Visualizer und MPRIS D-Bus Steuerung.">
+  <meta property="og:description" content="Nativer Spotify Bildschirmschoner in Go & WebKitGTK. Werbeerkennung, Clean Cover Layout, OLED-Digitaluhr und 60 FPS Audio-FFT.">
   <meta property="og:url" content="https://benzjeremy.github.io/spotify-screensaver/">
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="spotify-screensaver · Go Desktop Screensaver">
-  <meta name="twitter:description" content="60 FPS Canvas Visualizer, OLED Burn-In Schutz und D-Bus Steuerung in Go.">
+  <meta name="twitter:description" content="60 FPS Canvas Visualizer, Intelligentes Ad-Handling und D-Bus Steuerung in Go.">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="stylesheet" href="style.css">
 </head>
@@ -31,7 +31,7 @@
           <img src="favicon.svg" alt="spotify-screensaver" class="brand-logo" width="36" height="36">
           <div class="brand-info">
             <span class="brand-name">spotify-screensaver</span>
-            <span class="brand-ver">v1.3</span>
+            <span class="brand-ver">v1.4</span>
           </div>
         </a>
       </div>
@@ -84,7 +84,7 @@
       <div class="hero-container">
         
         <div class="hero-badges">
-          <span class="hero-badge release-badge">🚀 Release v1.3 [Live Spectrum &amp; Palette]</span>
+          <span class="hero-badge release-badge">🚀 Release v1.4 [Ad-Handling &amp; Clean Layout]</span>
           <a href="https://github.com/avelino/awesome-go#other-software" target="_blank" rel="noopener noreferrer" class="hero-badge awesome-badge" title="Gelistet in Awesome-Go (#6667 / #6675)">
             ★ In Awesome-Go gelistet (#6675)
           </a>
@@ -208,43 +208,56 @@
           </p>
         </div>
 
-        <div class="feature-grid">
           <!-- 1 -->
           <article class="feature-card">
-            <div class="f-card-icon">🎵</div>
-            <h3>Multi-Mode Audio Visualizer</h3>
-            <p>Wähle zwischen sanften Frequenzbalken, dynamischen Wellenformen, kreisförmigem Bass-Puls oder kosmischem Sternenfeld.</p>
+            <div class="f-card-icon">📢</div>
+            <h3>Intelligente Werbeerkennung</h3>
+            <p>Erkennt Werbeeinblendungen bei Spotify Free automatisch und schaltet nahtlos auf ein dezent elegantes Dark-Theme Cover um.</p>
           </article>
 
           <!-- 2 -->
+          <article class="feature-card">
+            <div class="f-card-icon">🖼️</div>
+            <h3>Fokussiertes Clean-Layout</h3>
+            <p>Redundanzfreies Design ohne ablenkende Vinyl-Grafiken. Maximaler Fokus auf das Albumcover, Typografie und Frequenzwellen.</p>
+          </article>
+
+          <!-- 3 -->
+          <article class="feature-card">
+            <div class="f-card-icon">🎵</div>
+            <h3>Multi-Mode Audio Visualizer</h3>
+            <p>Wähle zwischen Frequenzbalken mit Peak-Hold, Oszillograph-Wellen, Doppelsäulen oder 360° Zirkulär-Spektrum.</p>
+          </article>
+
+          <!-- 4 -->
           <article class="feature-card">
             <div class="f-card-icon">🕒</div>
             <h3>OLED-Digitaluhr &amp; Datum</h3>
             <p>Große, elegante Zeitanzeige mit optionalen Sekunden, aktuellem Wochentag und Datum. Perfekt als Raum-Display.</p>
           </article>
 
-          <!-- 3 -->
+          <!-- 5 -->
           <article class="feature-card">
             <div class="f-card-icon">🎨</div>
             <h3>Dynamische Cover-Palette</h3>
             <p>Extrahiert automatisch die dominante Farbharmonie des aktuellen Album-Covers und passt Visualizer und Akzente fließend an.</p>
           </article>
 
-          <!-- 4 -->
+          <!-- 6 -->
           <article class="feature-card">
             <div class="f-card-icon">🎛️</div>
             <h3>D-Bus MPRIS &amp; Media-Keys</h3>
             <p>Interaktive Mediensteuerung: Play/Pause, Track-Wechsel, Lautstärkeregelung und interaktiver Track-Scrubber direkt auf dem Screen.</p>
           </article>
 
-          <!-- 5 -->
+          <!-- 7 -->
           <article class="feature-card">
             <div class="f-card-icon">🛡️</div>
             <h3>OLED Burn-in Protection</h3>
             <p>Automatisches periodisches Verschieben aller Bildelemente im Subpixelbereich verhindert dauerhaftes Einbrennen auf High-End Displays.</p>
           </article>
 
-          <!-- 6 -->
+          <!-- 8 -->
           <article class="feature-card">
             <div class="f-card-icon">🏆</div>
             <h3>Awesome-Go Auszeichnung</h3>
@@ -281,13 +294,13 @@
                 <h3>Linux (x86_64)</h3>
               </div>
               <p class="inst-desc">Tarball herunterladen, entpacken und direkt mit nativer WebKitGTK-Hardwarebeschleunigung starten:</p>
-              <pre class="inst-pre"><code>tar -xzf spotify-screensaver-*-linux.tar.gz
-chmod +x spotify-screensaver
-./spotify-screensaver</code></pre>
+              <pre class="inst-pre"><code>tar -xzf spotify-screensaver-v1.4-linux.tar.gz
+sudo cp spotify-screensaver /usr/local/bin/
+spotify-screensaver</code></pre>
             </div>
             <div>
-              <a href="https://github.com/benzjeremy/spotify-screensaver/releases/latest" target="_blank" rel="noopener noreferrer" class="btn-sm">
-                Linux Tarball (Latest) herunterladen →
+              <a href="https://github.com/benzjeremy/spotify-screensaver/releases/download/v1.4/spotify-screensaver-v1.4-linux.tar.gz" target="_blank" rel="noopener noreferrer" class="btn-sm">
+                Linux Tarball (v1.4) herunterladen →
               </a>
             </div>
           </div>
@@ -300,13 +313,13 @@ chmod +x spotify-screensaver
                 <h3>Windows (x86_64)</h3>
               </div>
               <p class="inst-desc">ZIP-Archiv entpacken und die Standalone-Executable ohne Installation starten:</p>
-              <pre class="inst-pre"><code>1. spotify-screensaver-*-windows.zip entpacken
+              <pre class="inst-pre"><code>1. spotify-screensaver-v1.4-windows.zip entpacken
 2. spotify-screensaver.exe starten
 3. Spotify öffnen und Visualizer genießen</code></pre>
             </div>
             <div>
-              <a href="https://github.com/benzjeremy/spotify-screensaver/releases/latest" target="_blank" rel="noopener noreferrer" class="btn-sm">
-                Windows ZIP (Latest) herunterladen →
+              <a href="https://github.com/benzjeremy/spotify-screensaver/releases/download/v1.4/spotify-screensaver-v1.4-windows.zip" target="_blank" rel="noopener noreferrer" class="btn-sm">
+                Windows ZIP (v1.4) herunterladen →
               </a>
             </div>
           </div>
