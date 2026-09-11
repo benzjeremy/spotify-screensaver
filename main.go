@@ -17,7 +17,7 @@ import (
 	"github.com/benzjeremy/spotify-screensaver/store"
 )
 
-const Version = "v1.3"
+const Version = "v1.4"
 
 //go:embed assets/*
 var embeddedAssets embed.FS

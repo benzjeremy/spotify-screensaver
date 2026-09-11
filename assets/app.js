@@ -8,6 +8,7 @@
 
   const playerCardEl = document.getElementById("playerCard");
   const coverImgEl = document.getElementById("coverImg");
+  const adBadgeEl = document.getElementById("adBadge");
   const trackTitleEl = document.getElementById("trackTitle");
   const trackArtistEl = document.getElementById("trackArtist");
   const trackAlbumEl = document.getElementById("trackAlbum");
@@ -189,17 +190,27 @@
     localPositionMs = data.position_ms;
     lastSyncTime = Date.now();
 
-    trackTitleEl.textContent = data.title || "Unbekannter Titel";
-    trackArtistEl.textContent = data.artist || "Spotify";
-    trackAlbumEl.textContent = data.album || "";
+    if (data.is_ad) {
+      if (adBadgeEl) adBadgeEl.classList.remove("hidden");
+      playerCardEl.classList.add("is-ad");
+      trackTitleEl.textContent = data.ad_title || "Spotify Werbung";
+      trackArtistEl.textContent = "Werbeunterbrechung";
+      trackAlbumEl.textContent = "Gleich geht's weiter...";
+      coverImgEl.src = data.ad_cover_url || "ad-placeholder.svg";
+    } else {
+      if (adBadgeEl) adBadgeEl.classList.add("hidden");
+      playerCardEl.classList.remove("is-ad");
+      trackTitleEl.textContent = data.title || "Unbekannter Titel";
+      trackArtistEl.textContent = data.artist || "Spotify";
+      trackAlbumEl.textContent = data.album || "";
+      if (data.art_url && data.art_url.startsWith("http")) {
+        coverImgEl.src = data.art_url;
+      }
+    }
     volTextEl.textContent = `${data.volume_percent}%`;
     volSlider.value = data.volume_percent;
 
     totalTimeEl.textContent = formatMs(data.duration_ms);
-
-    if (data.art_url && data.art_url.startsWith("http")) {
-      coverImgEl.src = data.art_url;
-    }
 
     // Dynamic cover palette integration (smooth transition)
     if (dynamicColors && data.primary_color) {

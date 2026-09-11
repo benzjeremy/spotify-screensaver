@@ -5,16 +5,22 @@
 [![CI](https://github.com/benzjeremy/spotify-screensaver/actions/workflows/ci.yml/badge.svg)](https://github.com/benzjeremy/spotify-screensaver/actions)
 [![Coverage](https://codecov.io/gh/benzjeremy/spotify-screensaver/branch/main/graph/badge.svg)](https://app.codecov.io/gh/benzjeremy/spotify-screensaver)
 [![Awesome Go](https://awesome.re/mentioned-badge.svg)](https://github.com/avelino/awesome-go)
-[![Release](https://img.shields.io/badge/Release-v1.3-emerald)](https://github.com/benzjeremy/spotify-screensaver/releases/latest)
+[![Release](https://img.shields.io/badge/Release-v1.4-emerald)](https://github.com/benzjeremy/spotify-screensaver/releases/latest)
 [![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0-blue.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-Linux%20%7C%20Windows-lightgrey.svg)]()
 
-> Ein eleganter, ressourcenschonender Desktop-Bildschirmschoner mit **Live-OLED-Uhrzeit**, **Spotify Song-Metadaten**, **hardwaregekoppelter Audio-Spektrumanalyse (PulseAudio/PipeWire)**, **dynamischer Cover-Farbpalette**, **Zirkulärem Spektrum** und **Inaktivitäts-Daemon** für Linux (WebKitGTK) und Windows (App-Mode). **100% Local-First & Zero Bloat.**
+> Ein eleganter, ressourcenschonender Desktop-Bildschirmschoner mit **Live-OLED-Uhrzeit**, **Spotify Song-Metadaten**, **intelligenter Werbeerkennung (Ad-Handling)**, **fokussiertem Clean-Design**, **hardwaregekoppelter Audio-Spektrumanalyse (PulseAudio/PipeWire)**, **dynamischer Cover-Farbpalette**, **Zirkulärem Spektrum** und **Inaktivitäts-Daemon** für Linux (WebKitGTK) und Windows (App-Mode). **100% Local-First & Zero Bloat.**
 
 ---
 
-## ✨ Features & Highlights in v1.3
+## ✨ Features & Highlights in v1.4
 
+- 📢 **Intelligente Werbeerkennung & Handhabung (Spotify Free):**
+  - Erkennt Werbephasen über MPRIS Track-IDs (`:ad:`), Metadata und API-Payloads.
+  - Automatisches Umschalten auf ein embedded Dark-Theme Werbecover (`ad-placeholder.svg`) mit dezent pulsierendem "WERBUNG"-Badge.
+  - Saubere Fallback-Metadaten ("Spotify Werbung" / "Werbeunterbrechung") anstelle von eingefrorenen alten Albencovern oder Glitches.
+- 🎨 **Fokussiertes Clean-Layout (Redundanzfreie Cover-Präsentation):**
+  - Vollständige Entfernung des redundanten CD-/Vinyl-Visuals zugunsten einer aufgeräumten, zentrierten Albumcover-Ästhetik mit sanftem Glow und abgerundeten Ecken.
 - 🎛️ **Echte Audio-Spektrumanalyse (PulseAudio / PipeWire / WASAPI):**
   - Direkter Hardware-Abgriff des Systemsounds via Monitor-Sink.
   - 64-Band FFT-Analyse (Cooley-Tukey Radix-2) mit 60 FPS WebSocket-Streaming (`/api/audio-stream`).
@@ -22,7 +28,7 @@
 - 🎨 **Dynamische Cover-Palette (Adaptive Glow & Accents):**
   - Schnelle Farbraumreduktion & Dominanzextraktion (K-Means / Quantisierung) in Go.
   - Automatische, weiche 1.2s CSS/Canvas-Farbüberblendung des Screensavers an die Primär- und Sekundärfarben des Albumcovers.
-- 🌊 **Neuer Zirkulärer Visualizer-Modus (Circular):**
+- 🌊 **Zirkulärer Visualizer-Modus (Circular):**
   - Strahlenförmiges 360°-Spektrum um das Albumcover mit glühenden Frequenzspitzen.
 - 💤 **Screensaver Idle-Daemon (`--idle-timeout=N`):**
   - Überwacht Benutzerinaktivität via `xprintidle` / D-Bus / Win32 und aktiviert den Bildschirmschoner vollautomatisch.
@@ -43,7 +49,6 @@
 - 🎛️ **Interaktiver Player & Steuerung:**
   - **Progress Scrubber:** Durch Klick auf die Fortschrittsleiste kann direkt zu jeder Songposition gesprungen werden.
   - **Volume-Slider:** Stufenlose Lautstärkeregelung direkt per Slider oder Tastatur.
-  - **Vinyl-Schallplatten-Animation:** Sanft rotierende Schallplatte mit metallischem Groove-Glanz bei aktiver Wiedergabe.
 - 🎵 **Zero-Config Spotify MPRIS:**
   - Erkennt Spotify Desktop und `spotify_player` unter Linux ohne API-Key direkt über D-Bus.
   - Flüssiger Demo-/Standby-Modus, wenn Spotify pausiert oder geschlossen ist.

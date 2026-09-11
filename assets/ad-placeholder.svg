@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="50%" stop-color="#090d16"/>
+      <stop offset="100%" stop-color="#04060a"/>
+    </linearGradient>
+    <linearGradient id="brandGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#22c55e"/>
+      <stop offset="100%" stop-color="#10b981"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Card Background -->
+  <rect width="300" height="300" rx="28" fill="url(#bgGrad)"/>
+  <rect width="298" height="298" x="1" y="1" rx="27" fill="none" stroke="rgba(255, 255, 255, 0.12)" stroke-width="1.5"/>
+
+  <!-- Radial Glow Behind Icon -->
+  <circle cx="150" cy="130" r="60" fill="#10b981" opacity="0.15" filter="url(#glow)"/>
+
+  <!-- Modern Speaker / Megaphone & Audio Waves Icon -->
+  <g transform="translate(150, 125) scale(0.95)">
+    <!-- Central Speaker Body -->
+    <path d="M-38 -14 L-18 -14 L4 -34 L4 34 L-18 14 L-38 14 Z" fill="url(#brandGrad)"/>
+    <!-- Sound Waves -->
+    <path d="M16 -18 C26 -8 26 8 16 18" fill="none" stroke="#22c55e" stroke-width="4.5" stroke-linecap="round"/>
+    <path d="M28 -28 C44 -12 44 12 28 28" fill="none" stroke="#10b981" stroke-width="4" stroke-linecap="round" opacity="0.85"/>
+    <path d="M40 -38 C62 -16 62 16 40 38" fill="none" stroke="#34d399" stroke-width="3.5" stroke-linecap="round" opacity="0.5"/>
+  </g>
+
+  <!-- Commercial Badge Pill -->
+  <g transform="translate(150, 230)">
+    <rect x="-70" y="-15" width="140" height="30" rx="15" fill="rgba(16, 185, 129, 0.15)" stroke="#10b981" stroke-width="1.2"/>
+    <circle cx="-50" cy="0" r="4" fill="#10b981"/>
+    <text x="-36" y="4.5" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700" fill="#ffffff" letter-spacing="1.5">WERBUNG</text>
+  </g>
+</svg>

@@ -81,6 +81,37 @@ func (c *Controller) GetPlaybackState() PlaybackState {
 	return c.lastState
 }
 
+// DetectAdvertisement analyzes track metadata to identify Spotify ad interstitials
+func DetectAdvertisement(title, artist, album, trackID string) (bool, string) {
+	if strings.Contains(trackID, ":ad:") || strings.HasPrefix(trackID, "spotify:ad:") {
+		t := title
+		if t == "" || strings.EqualFold(t, "Advertisement") || strings.EqualFold(t, "Werbung") {
+			t = "Spotify Werbung"
+		}
+		return true, t
+	}
+
+	lowerTitle := strings.ToLower(strings.TrimSpace(title))
+	lowerAlbum := strings.ToLower(strings.TrimSpace(album))
+	lowerArtist := strings.ToLower(strings.TrimSpace(artist))
+
+	if lowerTitle == "advertisement" || lowerTitle == "werbung" || lowerTitle == "spotify advertisement" {
+		return true, "Spotify Werbung"
+	}
+	if lowerAlbum == "advertisement" || lowerAlbum == "werbung" {
+		t := title
+		if t == "" || strings.EqualFold(t, "Advertisement") || strings.EqualFold(t, "Werbung") {
+			t = "Spotify Werbung"
+		}
+		return true, t
+	}
+	if (lowerArtist == "spotify" || lowerArtist == "") && (lowerTitle == "advertisement" || lowerTitle == "werbung") {
+		return true, "Spotify Werbung"
+	}
+
+	return false, ""
+}
+
 func (c *Controller) queryMPRIS() (PlaybackState, bool) {
 	if runtime.GOOS != "linux" {
 		return PlaybackState{}, false
@@ -89,7 +120,7 @@ func (c *Controller) queryMPRIS() (PlaybackState, bool) {
 	// Try playerctl targeting spotify first, then spotify_player, then any player
 	players := []string{"spotify", "spotify_player", "%any"}
 	for _, p := range players {
-		cmd := exec.Command("playerctl", "-p", p, "metadata", "--format", "{{title}}:::{{artist}}:::{{album}}:::{{mpris:artUrl}}:::{{position}}:::{{mpris:length}}:::{{status}}")
+		cmd := exec.Command("playerctl", "-p", p, "metadata", "--format", "{{title}}:::{{artist}}:::{{album}}:::{{mpris:artUrl}}:::{{position}}:::{{mpris:length}}:::{{status}}:::{{mpris:trackid}}")
 		out, err := cmd.Output()
 		if err != nil {
 			continue
@@ -107,12 +138,22 @@ func (c *Controller) queryMPRIS() (PlaybackState, bool) {
 		posMicros, _ := strconv.ParseInt(parts[4], 10, 64)
 		lenMicros, _ := strconv.ParseInt(parts[5], 10, 64)
 		status := strings.ToLower(parts[6])
+		trackID := ""
+		if len(parts) >= 8 {
+			trackID = parts[7]
+		}
 
 		isPlaying := status == "playing"
 		posMs := posMicros / 1000
 		durationMs := lenMicros / 1000
 		if durationMs <= 0 {
 			durationMs = 180000
+		}
+
+		isAd, adTitle := DetectAdvertisement(title, artist, album, trackID)
+		adCoverURL := ""
+		if isAd {
+			adCoverURL = "ad-placeholder.svg"
 		}
 
 		// Get volume
@@ -136,6 +177,9 @@ func (c *Controller) queryMPRIS() (PlaybackState, bool) {
 			PlayerName:    p,
 			IsConnected:   true,
 			Source:        "mpris",
+			IsAd:          isAd,
+			AdTitle:       adTitle,
+			AdCoverURL:    adCoverURL,
 		}, true
 	}
 
@@ -157,8 +201,29 @@ func (c *Controller) querySpotifyPlayer() (PlaybackState, bool) {
 	isPlaying, _ := data["is_playing"].(bool)
 	progressMs, _ := data["progress_ms"].(float64)
 
+	playingType, _ := data["currently_playing_type"].(string)
+
 	item, ok := data["item"].(map[string]interface{})
 	if !ok {
+		// Even if item is nil, if currently_playing_type is "ad", it's an ad
+		if playingType == "ad" {
+			return PlaybackState{
+				IsPlaying:     isPlaying,
+				Title:         "Spotify Werbung",
+				Artist:        "Werbeunterbrechung",
+				Album:         "Spotify",
+				ArtURL:        "",
+				PositionMs:    int64(progressMs),
+				DurationMs:    30000,
+				VolumePercent: 80,
+				PlayerName:    "spotify_player",
+				IsConnected:   true,
+				Source:        "spotify_player",
+				IsAd:          true,
+				AdTitle:       "Spotify Werbung",
+				AdCoverURL:    "ad-placeholder.svg",
+			}, true
+		}
 		return PlaybackState{}, false
 	}
 
@@ -187,6 +252,23 @@ func (c *Controller) querySpotifyPlayer() (PlaybackState, bool) {
 		}
 	}
 
+	itemType, _ := item["type"].(string)
+	isAd := playingType == "ad" || itemType == "ad"
+	adTitle := ""
+	if !isAd {
+		isAd, adTitle = DetectAdvertisement(title, strings.Join(artists, ", "), albumName, "")
+	} else {
+		adTitle = title
+		if adTitle == "" {
+			adTitle = "Spotify Werbung"
+		}
+	}
+
+	adCoverURL := ""
+	if isAd {
+		adCoverURL = "ad-placeholder.svg"
+	}
+
 	return PlaybackState{
 		IsPlaying:     isPlaying,
 		Title:         title,
@@ -199,6 +281,9 @@ func (c *Controller) querySpotifyPlayer() (PlaybackState, bool) {
 		PlayerName:    "spotify_player",
 		IsConnected:   true,
 		Source:        "spotify_player",
+		IsAd:          isAd,
+		AdTitle:       adTitle,
+		AdCoverURL:    adCoverURL,
 	}, true
 }
 
@@ -288,6 +373,11 @@ func (c *Controller) Seek(seconds int) {
 }
 
 func (c *Controller) enrichColors(state *PlaybackState) {
+	if state.IsAd {
+		state.PrimaryColor = "#1db954"
+		state.SecondaryColor = "#0d1117"
+		return
+	}
 	if state.ArtURL != "" && strings.HasPrefix(state.ArtURL, "http") {
 		if colors, err := c.extractor.ExtractFromURL(state.ArtURL); err == nil {
 			state.PrimaryColor = colors.Primary

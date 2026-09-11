@@ -14,4 +14,7 @@ type PlaybackState struct {
 	PlayerName    string `json:"player_name"`
 	IsConnected   bool   `json:"is_connected"`
 	Source        string `json:"source"` // "mpris", "spotify_player", "web_api", "demo"
+	IsAd          bool   `json:"is_ad"`
+	AdTitle       string `json:"ad_title"`
+	AdCoverURL    string `json:"ad_cover_url"`
 }
