@@ -9,74 +9,72 @@
 [![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0-blue.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-Linux%20%7C%20Windows-lightgrey.svg)]()
 
-> Ein eleganter, ressourcenschonender Desktop-Bildschirmschoner mit **Live-OLED-Uhrzeit**, **Spotify Song-Metadaten**, **intelligenter Werbeerkennung (Ad-Handling)**, **fokussiertem Clean-Design**, **hardwaregekoppelter Audio-Spektrumanalyse (PulseAudio/PipeWire)**, **dynamischer Cover-Farbpalette**, **Zirkulärem Spektrum** und **Inaktivitäts-Daemon** für Linux (WebKitGTK) und Windows (App-Mode). **100% Local-First & Zero Bloat.**
+> An elegant, resource-friendly desktop screensaver with **Live OLED clock**, **Spotify song metadata**, **intelligent ad handling**, **focused clean design**, **hardware-coupled audio spectrum analysis (PulseAudio/PipeWire)**, **dynamic cover color palette**, **circular visualizer**, and an **inactivity daemon** for Linux (WebKitGTK) and Windows (App Mode). **100% Local-First & Zero Bloat.**
 
 ---
 
 ## ✨ Features & Highlights in v1.4
 
-- 📢 **Intelligente Werbeerkennung & Handhabung (Spotify Free):**
-  - Erkennt Werbephasen über MPRIS Track-IDs (`:ad:`), Metadata und API-Payloads.
-  - Automatisches Umschalten auf ein embedded Dark-Theme Werbecover (`ad-placeholder.svg`) mit dezent pulsierendem "WERBUNG"-Badge.
-  - Saubere Fallback-Metadaten ("Spotify Werbung" / "Werbeunterbrechung") anstelle von eingefrorenen alten Albencovern oder Glitches.
-- 🎨 **Fokussiertes Clean-Layout (Redundanzfreie Cover-Präsentation):**
-  - Vollständige Entfernung des redundanten CD-/Vinyl-Visuals zugunsten einer aufgeräumten, zentrierten Albumcover-Ästhetik mit sanftem Glow und abgerundeten Ecken.
-- 🎛️ **Echte Audio-Spektrumanalyse (PulseAudio / PipeWire / WASAPI):**
-  - Direkter Hardware-Abgriff des Systemsounds via Monitor-Sink.
-  - 64-Band FFT-Analyse (Cooley-Tukey Radix-2) mit 60 FPS WebSocket-Streaming (`/api/audio-stream`).
-  - Latenzfreie Visualisierung echter Bässe, Mitten und Höhen statt reiner Simulation.
-- 🎨 **Dynamische Cover-Palette (Adaptive Glow & Accents):**
-  - Schnelle Farbraumreduktion & Dominanzextraktion (K-Means / Quantisierung) in Go.
-  - Automatische, weiche 1.2s CSS/Canvas-Farbüberblendung des Screensavers an die Primär- und Sekundärfarben des Albumcovers.
-- 🌊 **Zirkulärer Visualizer-Modus (Circular):**
-  - Strahlenförmiges 360°-Spektrum um das Albumcover mit glühenden Frequenzspitzen.
-- 💤 **Screensaver Idle-Daemon (`--idle-timeout=N`):**
-  - Überwacht Benutzerinaktivität via `xprintidle` / D-Bus / Win32 und aktiviert den Bildschirmschoner vollautomatisch.
-
-- 🕒 **OLED Digitaluhr & deutsches Datum:**
-  - Große Neon-Zeitanzeige mit konfigurierbarer Sekundenanzeige (ein-/ausblendbar) und 12h/24h-Umschaltung.
-  - Deutsches Datumsformat (z. B. "Samstag, 5. September 2026").
-- 🎨 **Farbakzente & Themes (4 Stile):**
-  - 🟢 **Spotify Classic:** Echtes Spotify-Grün mit feinem Glow.
-  - 🔷 **Electric Cyan:** Futuristisches Ice-Blue Neon.
-  - 🟣 **Neon Purple:** Cyberpunk Violett / Deep Magenta.
-  - 🟡 **Sunset Amber:** Warmer Gold-/Amber-Ton.
-- 🌊 **Multi-Mode Canvas Audio-Visualizer:**
-  - **Bars:** 48 Frequenzbalken mit physikalischem Peak-Hold-Drop und Farbverlauf.
-  - **Wave:** Fließende Oszillograph-Welle mit weichem Glow.
-  - **Mirrored:** Gespiegelte Doppelsäulen vom Zentrum aus.
-  - Regulierbare Sensitivität / Reaktionsstärke.
-- 🎛️ **Interaktiver Player & Steuerung:**
-  - **Progress Scrubber:** Durch Klick auf die Fortschrittsleiste kann direkt zu jeder Songposition gesprungen werden.
-  - **Volume-Slider:** Stufenlose Lautstärkeregelung direkt per Slider oder Tastatur.
+- 📢 **Intelligent Ad Detection & Handling (Spotify Free):**
+  - Detects advertisements via MPRIS track IDs (`:ad:`), metadata, and API payloads.
+  - Automatically switches to an embedded dark-themed ad placeholder (`ad-placeholder.svg`) with a subtle pulsating "ADVERTISEMENT" badge.
+  - Clean fallback metadata ("Spotify Advertisement" / "Commercial Break") instead of frozen stale cover art or rendering glitches.
+- 🎨 **Focused Clean Layout (Redundancy-Free Cover Presentation):**
+  - Completely replaced the redundant vinyl/CD visual with a centered album art aesthetic featuring soft ambient glow and rounded geometry.
+- 🎛️ **True Hardware Audio Spectrum Analysis (PulseAudio / PipeWire / WASAPI):**
+  - Direct hardware tap of system audio via monitor sink.
+  - 64-band FFT analysis (Cooley-Tukey Radix-2) with 60 FPS WebSocket streaming (`/api/audio-stream`).
+  - Zero-latency visualization of real bass, mid, and treble frequencies rather than simulation.
+- 🎨 **Dynamic Cover Palette (Adaptive Glow & Accents):**
+  - Fast color space reduction and dominance extraction (K-Means / quantization) in Go.
+  - Smooth 1.2s CSS/Canvas color transitions adapting screensaver glow and accents to the album's primary and secondary palette.
+- 🌊 **Circular Visualizer Mode:**
+  - 360° radial frequency spectrum around album art with glowing peak highlights.
+- 💤 **Idle Detection Daemon (`--idle-timeout=N`):**
+  - Monitors user inactivity via `xprintidle` / D-Bus / Win32 and activates the screensaver automatically.
+- 🕒 **OLED Digital Clock & Date:**
+  - High-contrast neon time display with configurable seconds toggle and 12h/24h format support.
+- 🎨 **Color Accents & Themes (4 Styles):**
+  - 🟢 **Spotify Classic:** Signature Spotify green with soft ambient neon.
+  - 🔷 **Electric Cyan:** Futuristic ice-blue neon.
+  - 🟣 **Neon Purple:** Cyberpunk violet / deep magenta.
+  - 🟡 **Sunset Amber:** Warm gold / amber tone.
+- 🌊 **Multi-Mode Canvas Audio Visualizer:**
+  - **Bars:** 48 frequency bars with physical peak-hold drops and gradients.
+  - **Wave:** Flowing oscilloscope wave with soft neon blur.
+  - **Mirrored:** Mirrored dual columns radiating from the center.
+  - Configurable sensitivity and responsiveness.
+- 🎛️ **Interactive Playback Controls:**
+  - **Progress Scrubber:** Click anywhere on the track bar to seek.
+  - **Volume Slider:** Seamless volume adjustment via slider or keyboard shortcuts.
 - 🎵 **Zero-Config Spotify MPRIS:**
-  - Erkennt Spotify Desktop und `spotify_player` unter Linux ohne API-Key direkt über D-Bus.
-  - Flüssiger Demo-/Standby-Modus, wenn Spotify pausiert oder geschlossen ist.
-- 🛡️ **Verbindliche Sicherheitsarchitektur (Jeremy Benz Standards):**
-  - **Kryptografie:** AES-256-GCM Token-Verschlüsselung, abgeleitet via PBKDF2 (100.000 Runden, Hardware-Fingerprint, unikat generiertes Salt in `~/.config/spotify-screensaver/salt.bin`).
-  - **Netzwerksicherheit:** Lokaler HTTP-Server bindet strikt an `127.0.0.1:43210`.
-  - **Anti-DNS-Rebinding & Anti-CSRF:** Strikte Validierung des `Host`- und `Origin`-Headers.
-  - **Security Headers:** `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: no-referrer`, CSP.
-- 💤 **Screensaver-Automatik:** Automatisches Ausblenden von Mauszeiger und HUD nach 4 Sekunden Inaktivität.
+  - Automatically detects Spotify Desktop and `spotify_player` on Linux over D-Bus without requiring API keys.
+  - Smooth standby demo mode when Spotify is paused or closed.
+- 🛡️ **Strict Security Architecture (Jeremy Benz Standards):**
+  - **Cryptography:** AES-256-GCM token encryption derived via PBKDF2 (100,000 rounds, hardware fingerprint, unique salt stored in `~/.config/spotify-screensaver/salt.bin`).
+  - **Network Isolation:** Local HTTP server binds strictly to `127.0.0.1:43210`.
+  - **Anti-DNS-Rebinding & Anti-CSRF:** Strict validation of `Host` and `Origin` headers.
+  - **Security Headers:** `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: no-referrer`, strict CSP.
+- 💤 **Automatic Inactivity Fade:** Hides mouse cursor and HUD overlays after 4 seconds of idle time.
 
 ---
 
-## ⌨️ Tastatur-Shortcuts
+## ⌨️ Keyboard Shortcuts
 
-| Taste | Aktion |
+| Key | Action |
 |---|---|
-| <kbd>Space</kbd> | Wiedergabe / Pause |
-| <kbd>→</kbd> | Nächster Song (Next) |
-| <kbd>←</kbd> | Vorheriger Song (Previous) |
-| <kbd>↑</kbd> / <kbd>↓</kbd> | Lautstärke +5% / -5% |
-| <kbd>F</kbd> oder <kbd>F11</kbd> | Vollbildmodus umschalten |
-| <kbd>ESC</kbd> | Screensaver beenden / Einstellungen schließen |
+| <kbd>Space</kbd> | Play / Pause |
+| <kbd>→</kbd> | Next Track |
+| <kbd>←</kbd> | Previous Track |
+| <kbd>↑</kbd> / <kbd>↓</kbd> | Volume +5% / -5% |
+| <kbd>F</kbd> or <kbd>F11</kbd> | Toggle Fullscreen Mode |
+| <kbd>ESC</kbd> | Exit Screensaver / Close Settings Modal |
 
 ---
 
-## 🚀 Installation & Start
+## 🚀 Installation & Usage
 
-### 1. Aus Quellcode kompilieren (Linux mit WebKitGTK)
+### 1. Build from Source (Linux with WebKitGTK)
 
 ```bash
 cd ~/Projekte/benzjeremy.github.io/spotify-screensaver
@@ -84,19 +82,19 @@ go build -o spotify-screensaver .
 ./spotify-screensaver
 ```
 
-### 2. Als Vollbild-Screensaver starten
+### 2. Run in Fullscreen Screensaver Mode
 
 ```bash
 ./spotify-screensaver -fullscreen
 ```
 
-### 3. Im Standard-Browser starten
+### 3. Run in Default Browser Mode
 
 ```bash
 ./spotify-screensaver -browser
 ```
 
-### 4. Cross-Compilation für Windows
+### 4. Cross-Compile for Windows
 
 ```bash
 CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o bin/spotify-screensaver-windows-amd64.exe .
@@ -104,8 +102,7 @@ CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o bin/spotify-screensaver-wind
 
 ---
 
-## ⚖️ Lizenz
+## ⚖️ License & Author
 
-Dieses Projekt ist unter der **GNU General Public License v3.0 (GPL-3.0)** lizenziert – siehe [LICENSE](LICENSE) für Details.
-
-Entwickelt von **Jeremy Benz** · [benzjeremy.github.io](https://benzjeremy.github.io/)
+- **Developer:** Jeremy Benz ([@benzjeremy](https://github.com/benzjeremy)) · [benzjeremy.github.io](https://benzjeremy.github.io/)
+- **License:** [GNU General Public License v3.0 (GPL-3.0)](LICENSE)
