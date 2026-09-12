@@ -5,9 +5,15 @@
 [![CI](https://github.com/benzjeremy/spotify-screensaver/actions/workflows/ci.yml/badge.svg)](https://github.com/benzjeremy/spotify-screensaver/actions)
 [![Coverage](https://codecov.io/gh/benzjeremy/spotify-screensaver/branch/main/graph/badge.svg)](https://app.codecov.io/gh/benzjeremy/spotify-screensaver)
 [![Awesome Go](https://awesome.re/mentioned-badge.svg)](https://github.com/avelino/awesome-go)
-[![Release](https://img.shields.io/badge/Release-v1.4-emerald)](https://github.com/benzjeremy/spotify-screensaver/releases/latest)
+[![Release](https://img.shields.io/badge/Release-v1.4%20[Pre--Release]-emerald)](https://github.com/benzjeremy/spotify-screensaver/releases/latest)
+[![Status: Pre-Release](https://img.shields.io/badge/Status-Pre--Release%20%2F%20WIP-orange.svg)](https://github.com/benzjeremy/spotify-screensaver)
 [![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0-blue.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-Linux%20%7C%20Windows-lightgrey.svg)]()
+
+> [!IMPORTANT]
+> ### 🚧 Pre-Release / Active Development Notice
+> **This software is not yet finished and is under active development.**  
+> All releases, builds, and versions are **Pre-Releases** (Work in Progress), even if originally tagged or announced without a pre-release flag. Features, hardware tap APIs, and UI designs are actively developed and continually updated.
 
 > An elegant, resource-friendly desktop screensaver with **Live OLED clock**, **Spotify song metadata**, **intelligent ad handling**, **focused clean design**, **hardware-coupled audio spectrum analysis (PulseAudio/PipeWire)**, **dynamic cover color palette**, **circular visualizer**, and an **inactivity daemon** for Linux (WebKitGTK) and Windows (App Mode). **100% Local-First & Zero Bloat.**
 
