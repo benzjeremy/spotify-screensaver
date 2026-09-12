@@ -41,7 +41,26 @@ static gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer use
     return FALSE;
 }
 
-static void run_gtk_screensaver(const char *title, const char *url, int width, int height, int fullscreen) {
+static void set_window_icon_from_memory(GtkWindow *window, const void *buf, gsize len) {
+    if (!buf || len == 0) return;
+    GError *err = NULL;
+    GdkPixbufLoader *loader = gdk_pixbuf_loader_new();
+    if (loader) {
+        if (gdk_pixbuf_loader_write(loader, (const guint8 *)buf, len, &err)) {
+            gdk_pixbuf_loader_close(loader, &err);
+            GdkPixbuf *pixbuf = gdk_pixbuf_loader_get_pixbuf(loader);
+            if (pixbuf) {
+                gtk_window_set_icon(window, pixbuf);
+                gtk_window_set_default_icon(pixbuf);
+            }
+        }
+        g_object_unref(loader);
+    }
+    gtk_window_set_default_icon_name("spotify-screensaver");
+    gtk_window_set_icon_name(window, "spotify-screensaver");
+}
+
+static void run_gtk_screensaver(const char *title, const char *url, int width, int height, int fullscreen, const void *icon_buf, int icon_len) {
     int argc = 0;
     char **argv = NULL;
     if (!gtk_init_check(&argc, &argv)) {
@@ -55,6 +74,10 @@ static void run_gtk_screensaver(const char *title, const char *url, int width, i
     gtk_window_set_title(GTK_WINDOW(window), title);
     gtk_window_set_default_size(GTK_WINDOW(window), width, height);
     gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
+
+    if (icon_buf && icon_len > 0) {
+        set_window_icon_from_memory(GTK_WINDOW(window), icon_buf, (gsize)icon_len);
+    }
 
     GdkRGBA bg_color;
     gdk_rgba_parse(&bg_color, "#07090e");
@@ -90,9 +113,11 @@ static void run_gtk_screensaver(const char *title, const char *url, int width, i
 */
 import "C"
 import (
+	"fmt"
 	"log"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"unsafe"
 )
 
@@ -102,7 +127,47 @@ func init() {
 	_ = os.Setenv("WEBKIT_FORCE_COMPOSITING_MODE", "1")
 }
 
+// installDesktopIntegration automatically installs icons and desktop file into user's XDG directories
+func installDesktopIntegration() {
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return
+	}
+	iconDir := filepath.Join(home, ".local", "share", "icons", "hicolor", "512x512", "apps")
+	pixmapDir := filepath.Join(home, ".local", "share", "pixmaps")
+	appDir := filepath.Join(home, ".local", "share", "applications")
+	_ = os.MkdirAll(iconDir, 0755)
+	_ = os.MkdirAll(pixmapDir, 0755)
+	_ = os.MkdirAll(appDir, 0755)
+
+	iconPng, _ := embeddedAssets.ReadFile("assets/icon.png")
+	if len(iconPng) > 0 {
+		_ = os.WriteFile(filepath.Join(iconDir, "spotify-screensaver.png"), iconPng, 0644)
+		_ = os.WriteFile(filepath.Join(pixmapDir, "spotify-screensaver.png"), iconPng, 0644)
+	}
+
+	desktopPath := filepath.Join(appDir, "spotify-screensaver.desktop")
+	execPath, _ := os.Executable()
+	if execPath == "" {
+		execPath = "spotify-screensaver"
+	}
+	content := fmt.Sprintf(`[Desktop Entry]
+Name=Spotify Screensaver
+Comment=Real-Time Ambient Canvas & Audio Visualizer
+Exec=%s
+Icon=spotify-screensaver
+Terminal=false
+Type=Application
+Categories=AudioVideo;Audio;Screensaver;
+StartupWMClass=spotify-screensaver
+X-Wayland-AppID=spotify-screensaver
+`, execPath)
+	_ = os.WriteFile(desktopPath, []byte(content), 0644)
+}
+
 func LaunchGUI(title, url string, width, height int, fullscreen bool) {
+	installDesktopIntegration()
+
 	if C.check_display() == 0 {
 		log.Println("[GUI] Kein X11/Wayland Display gefunden, öffne Standardbrowser...")
 		_ = exec.Command("xdg-open", url).Start()
@@ -119,6 +184,12 @@ func LaunchGUI(title, url string, width, height int, fullscreen bool) {
 		cFullscreen = C.int(1)
 	}
 
+	iconBytes, _ := embeddedAssets.ReadFile("assets/icon.png")
+	var iconPtr unsafe.Pointer
+	if len(iconBytes) > 0 {
+		iconPtr = unsafe.Pointer(&iconBytes[0])
+	}
+
 	log.Printf("[GUI] Starte WebKitGTK Screensaver (%s)...\n", url)
-	C.run_gtk_screensaver(cTitle, cURL, C.int(width), C.int(height), cFullscreen)
+	C.run_gtk_screensaver(cTitle, cURL, C.int(width), C.int(height), cFullscreen, iconPtr, C.int(len(iconBytes)))
 }
