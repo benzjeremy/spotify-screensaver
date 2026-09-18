@@ -9,11 +9,23 @@
 [![Status: Pre-Release](https://img.shields.io/badge/Status-Pre--Release%20%2F%20WIP-orange.svg)](https://github.com/benzjeremy/spotify-screensaver)
 [![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0-blue.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-Linux%20%7C%20Windows-lightgrey.svg)]()
+[![Security: AES-256-GCM](https://img.shields.io/badge/Security-AES--256--GCM-success.svg)](https://en.wikipedia.org/wiki/Galois/Counter_Mode)
+
+
+> [!IMPORTANT]
+> ### 🔒 Primary Codebase & Active Development Moved to Self-Hosted Gitea
+> **For privacy optimization and sovereign self-hosted infrastructure, the primary development, source code, and releases of this project have permanently migrated to our self-hosted Gitea platform:**  
+> 👉 **[Gitea Repository: https://pi5.darter-basking.ts.net/gitea/spotify-screensaver/spotify-screensaver](https://pi5.darter-basking.ts.net/gitea/spotify-screensaver/spotify-screensaver)**  
+> 👉 **[Official Web Showcase: https://pi5.darter-basking.ts.net/spotify-screensaver/](https://pi5.darter-basking.ts.net/spotify-screensaver/)**
+> 
+> *This GitHub repository serves solely as a read-only mirror for Go toolchain compatibility (`go install`, `pkg.go.dev`, `awesome-go`). All active development, issues, and releases take place on Gitea.*
+
+---
 
 > [!IMPORTANT]
 > ### 🚧 Pre-Release / Active Development Notice
 > **This software is not yet finished and is under active development.**  
-> All releases, builds, and versions are **Pre-Releases** (Work in Progress), even if originally tagged or announced without a pre-release flag. Features, hardware tap APIs, and UI designs are actively developed and continually updated.
+> All releases and binaries are **Pre-Releases** (Work in Progress), even if originally tagged or announced without a pre-release flag. Features, hardware tap APIs, and UI designs are actively developed and continually updated.
 
 > An elegant, resource-friendly desktop screensaver with **Live OLED clock**, **Spotify song metadata**, **intelligent ad handling**, **focused clean design**, **hardware-coupled audio spectrum analysis (PulseAudio/PipeWire)**, **dynamic cover color palette**, **circular visualizer**, and an **inactivity daemon** for Linux (WebKitGTK) and Windows (App Mode). **100% Local-First & Zero Bloat.**
 
